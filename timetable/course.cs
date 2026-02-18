@@ -1,16 +1,10 @@
 namespace pb178.timetable
 {
-    class Course
+    public class Course(string title, string code)
     {
-        public string Title { init; get; }
-        public string Code { init; get; }
+        public string Title { init; get; } = title;
+        public string Code { init; get; } = code;
         public Dictionary<string, Seminar> Seminars = new Dictionary<string, Seminar>();
         public Seminar? Lecture = null;
-
-        public Course(string title, string code)
-        {
-            Title = title;
-            Code = code;
-        }
     }
 }

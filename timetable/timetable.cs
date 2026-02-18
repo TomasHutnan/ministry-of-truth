@@ -1,6 +1,6 @@
 namespace pb178.timetable
 {
-    class Timetable
+    public class Timetable
     {
         private Dictionary<string, Enrollment> _enrollments = new Dictionary<string, Enrollment>();
 
@@ -10,7 +10,7 @@ namespace pb178.timetable
 
             foreach (Enrollment enrollment in _enrollments.Values)
             {
-                Course course = enrollment.course;
+                Course course = enrollment.Course;
 
                 if (course.Lecture != null)
                 {
@@ -38,7 +38,7 @@ namespace pb178.timetable
         public void EnrollSeminarGroup(string courseId, string seminarId)
         {
             Enrollment enrollment = _enrollments[courseId];
-            if (enrollment.course.Seminars.ContainsKey(seminarId))
+            if (enrollment.Course.Seminars.ContainsKey(seminarId))
             {
                 enrollment.SeminarIds.Add(seminarId);
             }
