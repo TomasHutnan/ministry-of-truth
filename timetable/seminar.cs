@@ -2,9 +2,9 @@ namespace pb178.timetable
 {
     public class Seminar(string id, bool isLecture, string[] teacherNames)
     {
-        public readonly string Id = id;
-        public readonly bool IsLecture = isLecture;
-        public string[] TeacherNames = teacherNames;
+        public string Id { get; init; } = id;
+        public bool IsLecture { get; init; } = isLecture;
+        public string[] TeacherNames { get; init; } = teacherNames;
         public List<Session> Sessions = [];
 
         public void AddWeeklySession(DateTime firstSessionStart, DateTime firstSessionEnd, string? classroomId, int repetitionCount)

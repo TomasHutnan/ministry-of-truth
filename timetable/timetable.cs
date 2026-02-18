@@ -2,11 +2,11 @@ namespace pb178.timetable
 {
     public class Timetable
     {
-        private Dictionary<string, Enrollment> _enrollments = new Dictionary<string, Enrollment>();
+        private readonly Dictionary<string, Enrollment> _enrollments = [];
 
         public List<Seminar> GetSeminars()
         {
-            List<Seminar> seminars = new List<Seminar>();
+            List<Seminar> seminars = [];
 
             foreach (Enrollment enrollment in _enrollments.Values)
             {
@@ -30,6 +30,7 @@ namespace pb178.timetable
         {
             _enrollments.Add(course.Code, new Enrollment(course));
         }
+
         public void UnenrollCourse(string courseId)
         {
             _enrollments.Remove(courseId);
@@ -43,6 +44,7 @@ namespace pb178.timetable
                 enrollment.SeminarIds.Add(seminarId);
             }
         }
+
         public void UnenrollSeminarGroup(string courseId, string seminarId)
         {
             _enrollments[courseId].SeminarIds.Remove(seminarId);
