@@ -1,4 +1,4 @@
-namespace pb178.timetable
+namespace PB178.Timetable
 {
     public record Enrollment(Course Course)
     {

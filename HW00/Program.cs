@@ -1,4 +1,4 @@
-﻿using pb178.timetable;
+﻿using PB178.Timetable;
 
 
 Timetable timetable = new();
