@@ -1,9 +1,21 @@
 namespace pb178.timetable
 {
-    public readonly struct Session(DateTime start, DateTime end, string? classroomId)
+    public readonly struct Session
     {
-        public DateTime Start { get; } = start;
-        public DateTime End { get; } = end;
-        public string? ClassroomId { get; } = classroomId;
+        public DateTime Start { get; }
+        public DateTime End { get; }
+        public string? ClassroomId { get; }
+
+        public Session(DateTime start, DateTime end, string? classroomId)
+        {
+            if (end < start)
+            {
+                throw new ArgumentException("End must be greater than or equal to start.", nameof(end));
+            }
+
+            Start = start;
+            End = end;
+            ClassroomId = classroomId;
+        }
     }
 }
