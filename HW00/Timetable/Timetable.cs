@@ -4,7 +4,7 @@ namespace PB178.Timetable
     {
         private readonly Dictionary<string, Enrollment> _enrollments = [];
 
-        public List<Seminar> GetSeminars()
+        public IReadOnlyList<Seminar> GetSeminars()
         {
             List<Seminar> seminars = [];
 
@@ -23,31 +23,53 @@ namespace PB178.Timetable
                 }
             }
 
-            return seminars;
+            return seminars.AsReadOnly();
         }
 
         public void EnrollCourse(Course course)
         {
+            ArgumentNullException.ThrowIfNull(course);
+            if (_enrollments.ContainsKey(course.Code))
+            {
+                throw new ArgumentException($"Course with code {course.Code} is already enrolled.");
+            }
+
             _enrollments.Add(course.Code, new Enrollment(course));
         }
 
         public void UnenrollCourse(string courseId)
         {
+            ArgumentException.ThrowIfNullOrWhiteSpace(courseId);
+            if (!_enrollments.ContainsKey(courseId))
+            {
+                throw new ArgumentException($"No course with code {courseId} is enrolled.");
+            }
+
             _enrollments.Remove(courseId);
         }
 
         public void EnrollSeminarGroup(string courseId, string seminarId)
         {
-            Enrollment enrollment = _enrollments[courseId];
-            if (enrollment.Course.Seminars.ContainsKey(seminarId))
+            ArgumentException.ThrowIfNullOrWhiteSpace(courseId);
+            ArgumentException.ThrowIfNullOrWhiteSpace(seminarId);
+
+            if (!_enrollments.TryGetValue(courseId, out var enrollment))
             {
-                enrollment.SeminarIds.Add(seminarId);
+                throw new ArgumentException($"No course with code {courseId} is enrolled.");
             }
+            enrollment.AddSeminar(seminarId);
         }
 
         public void UnenrollSeminarGroup(string courseId, string seminarId)
         {
-            _enrollments[courseId].SeminarIds.Remove(seminarId);
+            ArgumentException.ThrowIfNullOrWhiteSpace(courseId);
+            ArgumentException.ThrowIfNullOrWhiteSpace(seminarId);
+
+            if (!_enrollments.TryGetValue(courseId, out var enrollment))
+            {
+                throw new ArgumentException($"No course with code {courseId} is enrolled.");
+            }
+            enrollment.RemoveSeminar(seminarId);
         }
     }
 }
