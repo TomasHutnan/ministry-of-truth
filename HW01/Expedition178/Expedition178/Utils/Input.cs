@@ -39,6 +39,11 @@ namespace Expedition178.Utils
                 }
             }
 
+            for (int i = 0; i < ints.Length; i++)
+            {
+                ints[i] -= 1;
+            }
+
             return true;
         }
 
