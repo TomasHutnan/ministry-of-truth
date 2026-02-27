@@ -46,6 +46,14 @@
             Speed = speed;
         }
 
+        public Entity()
+        {
+            Name = Utils.NameGenerator.GenerateName();
+            AttackPower = Random.Shared.Next(1, 11);
+            Health = Random.Shared.Next(1, 11);
+            Speed = Random.Shared.Next(1, 11);
+        }
+
         public virtual void TakeDamage(int damage)
         {
             Health -= damage;

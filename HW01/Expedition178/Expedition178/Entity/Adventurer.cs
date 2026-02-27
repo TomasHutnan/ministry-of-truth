@@ -17,6 +17,12 @@ namespace Expedition178.Entity
             _attackType = attackType;
         }
 
+        public Adventurer() : base()
+        {
+            var attackTypes = Enum.GetValues<AttackType>();
+            _attackType = attackTypes[Random.Shared.Next(attackTypes.Length)];
+        }
+
         public override void WriteName()
         {
             ConsoleColor originalColor = Console.ForegroundColor;

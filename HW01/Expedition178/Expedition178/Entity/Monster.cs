@@ -12,6 +12,12 @@ namespace Expedition178.Entity
             MonsterType = monsterType;
         }
 
+        public Monster() : base()
+        {
+            var monsterTypes = Enum.GetValues<MonsterType>();
+            MonsterType = monsterTypes[Random.Shared.Next(monsterTypes.Length)];
+        }
+
         public override void WriteName()
         {
             ConsoleColor originalColor = Console.ForegroundColor;
