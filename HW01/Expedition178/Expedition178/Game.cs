@@ -5,10 +5,11 @@ using Expedition178.Interface;
 
 namespace Expedition178
 {
-    public class Expedition : IGame, IBattle
+    public class Game : IGame
     {
         public void Start()
         {
 
         }
+    }
 }
