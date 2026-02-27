@@ -1,6 +1,6 @@
-using System;
+using Expedition178.Enumerate;
 
-namespace Expedition178.Enumerate
+namespace Expedition178.Utils
 {
     public static class AttackTypeExtensions
     {

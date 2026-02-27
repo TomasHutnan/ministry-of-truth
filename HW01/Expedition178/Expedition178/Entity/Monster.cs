@@ -1,4 +1,5 @@
 ﻿using Expedition178.Enumerate;
+using Expedition178.Utils;
 
 namespace Expedition178.Entity
 {
