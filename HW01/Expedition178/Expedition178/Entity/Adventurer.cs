@@ -11,16 +11,19 @@ namespace Expedition178.Entity
 
         private int _experience = 0;
         private int _level = 1;
+        private int _maxHealth;
 
         public Adventurer(string name, int attack, int health, int speed, AttackType attackType) : base(name, attack, health, speed)
         {
             _attackType = attackType;
+            _maxHealth = health;
         }
 
         public Adventurer() : base()
         {
             var attackTypes = Enum.GetValues<AttackType>();
             _attackType = attackTypes[Random.Shared.Next(attackTypes.Length)];
+            _maxHealth = Health;
         }
 
         public override void WriteName()
@@ -53,6 +56,29 @@ namespace Expedition178.Entity
             int damage = (int)Math.Ceiling(AttackPower * multiplier);
 
             monster.TakeDamage(damage);
+        }
+
+        public void Heal()
+        {
+            Health = _maxHealth;
+        }
+
+        private void LevelUp()
+        {
+            _level++;
+            AttackPower += Random.Shared.Next(1, 4);
+            _maxHealth += Random.Shared.Next(1, 4);
+            Speed += Random.Shared.Next(1, 4);
+        }
+
+        public void GainExperience(int experience)
+        {
+            _experience += experience;
+            while (_experience >= ExperienceToLevelUp)
+            {
+                _experience -= ExperienceToLevelUp;
+                LevelUp();
+            }
         }
     }
 }
