@@ -37,7 +37,7 @@ namespace Expedition178.Entity
             Console.Write($": {AttackPower} Attack, {Health} HP, {Speed} Speed");
         }
 
-        public void Attack(Adventurer adventurer)
+        public int Attack(Adventurer adventurer)
         {
             if (!IsAlive)
                 throw new InvalidOperationException($"{this} is dead and cannot attack.");
@@ -45,6 +45,7 @@ namespace Expedition178.Entity
                 throw new InvalidOperationException($"{adventurer} is dead and cannot be attacked.");
 
             adventurer.TakeDamage(AttackPower);
+            return AttackPower;
         }
     }
 }

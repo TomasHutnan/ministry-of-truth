@@ -5,32 +5,42 @@
         private int _attackPower;
         private int _health;
         private int _speed;
+        private int _maxHealth;
 
-        protected string Name { get; }
-        protected int AttackPower { 
+        public string Name { get; }
+        public int AttackPower { 
             get => _attackPower;
-            set
+            protected set
             {
                 ArgumentOutOfRangeException.ThrowIfNegative(value);
                 _attackPower = value;
             }
         }
-        protected int Health
+        public int Health
         {
             get => _health;
-            set
+            protected set
             {
                 ArgumentOutOfRangeException.ThrowIfNegative(value);
                 _health = value;
             }
         }
-        protected int Speed
+        public int Speed
         {
             get => _speed;
-            set
+            protected set
             {
                 ArgumentOutOfRangeException.ThrowIfNegative(value);
                 _speed = value;
+            }
+        }
+        protected int MaxHealth
+        {
+            get => _maxHealth;
+            set
+            {
+                ArgumentOutOfRangeException.ThrowIfNegative(value);
+                _maxHealth = value;
             }
         }
 
@@ -44,6 +54,7 @@
             AttackPower = attackPower;
             Health = health;
             Speed = speed;
+            MaxHealth = Health;
         }
 
         public Entity()
@@ -52,6 +63,7 @@
             AttackPower = Random.Shared.Next(1, 11);
             Health = Random.Shared.Next(1, 11);
             Speed = Random.Shared.Next(1, 11);
+            MaxHealth = Health;
         }
 
         public virtual void TakeDamage(int damage)
@@ -59,6 +71,11 @@
             Health -= damage;
             if (Health < 0)
                 Health = 0;
+        }
+
+        public void Heal()
+        {
+            Health = _maxHealth;
         }
 
         public abstract void WriteName();
