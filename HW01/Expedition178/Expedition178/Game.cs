@@ -9,7 +9,7 @@ namespace Expedition178
     {
         private Player? _player;
         private Enemy? _enemy;
-        private static readonly Battle _battler = new Battle();
+        private readonly Battler _battler = new Battler();
 
         private int _wavesBeaten = 0;
 
