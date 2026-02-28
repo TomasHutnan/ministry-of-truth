@@ -68,9 +68,14 @@
 
         public virtual void TakeDamage(int damage)
         {
-            Health -= damage;
-            if (Health < 0)
+            if (Health < damage)
+            {
                 Health = 0;
+            }
+            else
+            {
+                Health -= damage;
+            }
         }
 
         public void Heal()
