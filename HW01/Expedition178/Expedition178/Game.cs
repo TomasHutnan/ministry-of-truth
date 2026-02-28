@@ -14,7 +14,7 @@ namespace Expedition178
         private Enemy? _enemy;
         private static readonly Battle _battler = new Battle();
 
-        private int wavesBeaten = 0;
+        private int _wavesBeaten = 0;
 
         public void Start()
         {
@@ -41,13 +41,13 @@ namespace Expedition178
                         break;
                     case CommandType.Fight:
                         Fight();
-                        if (wavesBeaten >= 3)
+                        if (_wavesBeaten >= 3)
                         {
                             isRunning = false;
                         }
                         break;
                     case CommandType.Info:
-                        Console.WriteLine($"Waves defeated: {wavesBeaten}, the adventurers:");
+                        Console.WriteLine($"Waves defeated: {_wavesBeaten}, the adventurers:");
                         _player!.WriteStats();
                         break;
                     case CommandType.Sort:
@@ -59,9 +59,9 @@ namespace Expedition178
                 }
             }
 
-            if (wavesBeaten >= 3)
+            if (_wavesBeaten >= 3)
             {
-                Console.WriteLine($"Congratulations! You have completed Expedition 178 by defeating {wavesBeaten} waves of monsters!");
+                Console.WriteLine($"Congratulations! You have completed Expedition 178 by defeating {_wavesBeaten} waves of monsters!");
             }
             else
             {
@@ -77,7 +77,7 @@ namespace Expedition178
 
             if (winner == _player)
             {
-                wavesBeaten++;
+                _wavesBeaten++;
                 int experienceGained = Random.Shared.Next(100, 200);
                 int levelUpCount = _player.GainExperience(experienceGained);
 
