@@ -86,19 +86,20 @@ namespace Expedition178
                 Console.WriteLine();
 
                 _enemy = new Enemy();
-                _player.HealTeam();
-                _player.ResetOrder();
             }
             else
             {
-                wavesBeaten++;
-                int experienceGained = Random.Shared.Next(100, 200);
+                int experienceGained = Random.Shared.Next(25, 75);
                 int levelUpCount = _player!.GainExperience(experienceGained);
 
                 Console.Write($"The adventurers lost the battle. ");
                 WriteExperienceGained(experienceGained, levelUpCount);
                 Console.WriteLine();
             }
+
+            _player.HealTeam();
+            _player.ResetOrder();
+            _enemy!.HealTeam();
         }
 
         private void WriteExperienceGained(int experienceGained, int levelUpCount)
