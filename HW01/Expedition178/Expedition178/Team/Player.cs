@@ -17,6 +17,7 @@ namespace Expedition178.Team
                 choices[i] = new Adventurer();
                 Console.Write($"{i + 1}. ");
                 choices[i].WriteStats();
+                Console.WriteLine();
             }
 
             int[] chosenIndices = Input.GetAdventurerChoices();
@@ -24,6 +25,14 @@ namespace Expedition178.Team
             {
                 _adventurers[i - 1] = choices[i - 1];
             }
+
+            Console.Write("You have chosen ");
+            _adventurers[0].WriteName();
+            Console.Write(", ");
+            _adventurers[1].WriteName();
+            Console.Write(", ");
+            _adventurers[2].WriteName();
+            Console.WriteLine(".");
         }
 
         public override void WriteStats()
@@ -51,41 +60,32 @@ namespace Expedition178.Team
         public void SortAdventurers()
         {
             Console.WriteLine("Choose the order:");
-
-
             _adventurerIndices = Input.GetSortChoices();
+            Console.WriteLine("The order of your adventurers has been updated.");
         }
 
-        private void NextRound()
+        public override void HealTeam()
         {
             foreach (Adventurer adventurer in _adventurers)
             {
                 adventurer.Heal();
             }
+        }
 
+        public void ResetOrder()
+        {
             _adventurerIndices = [0, 1, 2];
         }
 
-        public void Victory()
+        public int GainExperience(int experienceGained)
         {
-            int experienceGained = Random.Shared.Next(100, 200);
+            // int experienceGained = Random.Shared.Next(100, 200);
+            int levelUpCount = 0;
             foreach (Adventurer adventurer in _adventurers)
             {
-                adventurer.GainExperience(experienceGained);
+                levelUpCount = adventurer.GainExperience(experienceGained);
             }
-
-            NextRound();
-        }
-
-        public void Defeat()
-        {
-            int experienceGained = Random.Shared.Next(50, 100);
-            foreach (Adventurer adventurer in _adventurers)
-            {
-                adventurer.GainExperience(experienceGained);
-            }
-
-            NextRound();
+            return levelUpCount;
         }
     }
 }

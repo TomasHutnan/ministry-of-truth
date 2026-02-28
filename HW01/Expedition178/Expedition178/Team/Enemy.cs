@@ -35,5 +35,13 @@ namespace Expedition178.Team
 
             return null;
         }
+
+        public override void HealTeam()
+        {
+            foreach (Monster monster in _monsters)
+            {
+                monster.Heal();
+            }
+        }
     }
 }
