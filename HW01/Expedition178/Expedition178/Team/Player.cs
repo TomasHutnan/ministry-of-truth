@@ -20,10 +20,10 @@ namespace Expedition178.Team
                 Console.WriteLine();
             }
 
-            int[] chosenIndices = Input.GetAdventurerChoices();
-            foreach (int i in chosenIndices)
+            int[] chosenPositions = Input.GetAdventurerChoices();
+            for (int i = 0; i < _adventurers.Length; i++)
             {
-                _adventurers[i - 1] = choices[i - 1];
+                _adventurers[i] = choices[chosenPositions[i] - 1];  // Subtract 1 to convert from 1-based to 0-based index
             }
 
             Console.Write("You have chosen ");
@@ -60,7 +60,13 @@ namespace Expedition178.Team
         public void SortAdventurers()
         {
             Console.WriteLine("Choose the order:");
+
             _adventurerIndices = Input.GetSortChoices();
+            for (int i = 0; i < _adventurers.Length; i++)
+            {
+                _adventurerIndices[i]--;  // Subtract 1 to convert from 1-based to 0-based index
+            }
+
             Console.WriteLine("The order of your adventurers has been updated.");
         }
 

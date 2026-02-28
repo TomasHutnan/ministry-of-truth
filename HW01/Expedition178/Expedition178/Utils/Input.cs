@@ -33,15 +33,13 @@ namespace Expedition178.Utils
 
             for (int i = 0; i < parts.Length; i++)
             {
-                if (!int.TryParse(parts[i], out ints[i]) || min > ints[i] || max < ints[i] || (unique && ints.Contains(ints[i])))
+                int parsedIdx;
+                if (!int.TryParse(parts[i], out parsedIdx) || min > parsedIdx || max < parsedIdx || (unique && ints.Contains(parsedIdx)))
                 {
                     return false;
                 }
-            }
 
-            for (int i = 0; i < ints.Length; i++)
-            {
-                ints[i] -= 1;
+                ints[i] = parsedIdx;
             }
 
             return true;
