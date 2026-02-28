@@ -52,7 +52,7 @@ namespace Expedition178.Utils
             string[] splitInput = AskForInput().Split(' ', count: 2);
             int[] choices;
 
-            while (splitInput.Length != 2 || splitInput[0] != "start" || !TryParseStringToIntArray(splitInput[0], out choices, max: 6))
+            while (splitInput.Length != 2 || splitInput[0] != "start" || !TryParseStringToIntArray(splitInput[1], out choices, max: 6))
             {
                 Console.WriteLine("Invalid input. Please enter start and three numbers to choose your adventureres. E.g. 'start 2 5 1'");
                 splitInput = AskForInput().Split(' ', count: 2);
