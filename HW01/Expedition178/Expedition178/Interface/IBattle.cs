@@ -1,3 +1,6 @@
+using Expedition178.Entity;
+using Expedition178.Team;
+
 namespace Expedition178.Interface
 {
     public interface IBattle
@@ -8,7 +11,7 @@ namespace Expedition178.Interface
         /// <param name="player">The player's team</param>
         /// <param name="enemy">The enemy team</param>
         /// <returns>The winner</returns>
-        //TODO:
+        Team.Team Fight(Player player, Enemy enemy);
 
         /// <summary>
         /// Performs one round of battle between two characters.
@@ -16,6 +19,6 @@ namespace Expedition178.Interface
         /// <param name="adventurer">The player's adventurer</param>
         /// <param name="creature">The enemy creature</param>
         /// <returns>The character that wins the round</returns>
-        //TODO:
+        Entity.Entity Round(Adventurer adventurer, Monster creature);
     }
 }
