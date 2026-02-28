@@ -5,7 +5,7 @@ namespace Expedition178.Entity
 {
     public class Monster : Entity
     {
-        public MonsterType MonsterType;
+        public MonsterType MonsterType { get; }
 
         public Monster(string name, int attack, int health, int speed, MonsterType monsterType) : base(name, attack, health, speed)
         {
