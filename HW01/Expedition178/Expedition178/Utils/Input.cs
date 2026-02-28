@@ -6,19 +6,19 @@ namespace Expedition178.Utils
     {
         public static string ReadLine()
         {
-            string? input = Console.ReadLine()?.Trim();
+            string? input = Console.ReadLine();
             while (string.IsNullOrEmpty(input))
             {
                 Console.WriteLine("Invalid input. Input cannot be empty. Please try again.");
-                input = Console.ReadLine()?.Trim();
+                input = Console.ReadLine();
             }
             return input;
         }
 
         public static string AskForInput()
         {
-            Console.WriteLine("[Player]: ");
-            return ReadLine();
+            Console.Write("[Player]: ");
+            return ReadLine().Trim();
         }
 
         public static bool TryParseStringToIntArray(string input, out int[] ints, bool unique = true, int expectedLength = 3, int min = 1, int max = 3)
