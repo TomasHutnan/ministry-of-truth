@@ -41,16 +41,17 @@ namespace Expedition178.Team
             {
                 Console.Write($"{i + 1}. ");
                 _adventurers[i].WriteStats();
+                Console.WriteLine();
             }
         }
 
         public Adventurer? GetNextAdventurer()
         {
-            foreach (Adventurer adventurer in _adventurers)
+            foreach (int i in _adventurerIndices)
             {
-                if (adventurer.IsAlive)
+                if (_adventurers[i].IsAlive)
                 {
-                    return adventurer;
+                    return _adventurers[i];
                 }
             }
 
@@ -60,6 +61,12 @@ namespace Expedition178.Team
         public void SortAdventurers()
         {
             Console.WriteLine("Choose the order:");
+            for (int i = 0; i < _adventurers.Length; i++)
+            {
+                Console.Write($"{i + 1}. ");
+                _adventurers[i].WriteStats();
+                Console.WriteLine();
+            }
 
             _adventurerIndices = Input.GetSortChoices();
             for (int i = 0; i < _adventurers.Length; i++)

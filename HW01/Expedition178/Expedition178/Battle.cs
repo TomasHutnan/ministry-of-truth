@@ -36,6 +36,8 @@ namespace Expedition178
 
                     adventurer = player.GetNextAdventurer();
                 }
+
+                round++;
             }
 
             return adventurer != null ? player : enemy;
@@ -55,8 +57,8 @@ namespace Expedition178
                     creature.WriteName();
                     Console.WriteLine(".");
 
-                    adventurer.WriteName();
-                    Console.WriteLine($" currently has {adventurer.Health} HP.");
+                    creature.WriteName();
+                    Console.WriteLine($" currently has {creature.Health} HP.");
                 }
                 else
                 {
@@ -67,7 +69,7 @@ namespace Expedition178
                     adventurer.WriteName();
                     Console.WriteLine(".");
 
-                    creature.WriteName();
+                    adventurer.WriteName();
                     Console.WriteLine($" currently has {adventurer.Health} HP.");
                 }
                 adventurersTurn = !adventurersTurn;

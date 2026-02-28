@@ -20,6 +20,7 @@ namespace Expedition178.Team
             {
                 Console.Write($"{i + 1}. ");
                 _monsters[i].WriteStats();
+                Console.WriteLine();
             }
         }
 
