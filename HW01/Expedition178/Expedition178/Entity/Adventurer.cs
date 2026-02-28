@@ -12,7 +12,7 @@ namespace Expedition178.Entity
         private int _experience = 0;
         private int _level = 1;
 
-        public Adventurer(string name, int attack, int health, int speed, AttackType attackType) : base(name, attack, health, speed)
+        public Adventurer(string name, int attack, int health, int speed, AttackType attackType) : base(name, attack, health, speed, attackType.ToColor())
         {
             _attackType = attackType;
         }
@@ -21,24 +21,13 @@ namespace Expedition178.Entity
         {
             var attackTypes = Enum.GetValues<AttackType>();
             _attackType = attackTypes[Random.Shared.Next(attackTypes.Length)];
-        }
 
-        public override void WriteName()
-        {
-            ConsoleColor originalColor = Console.ForegroundColor;
-
-            Console.ForegroundColor = _attackType.ToColor();
-            Console.Write(Name);
-            Console.ForegroundColor = originalColor;
+            _color = _attackType.ToColor();
         }
 
         public override void WriteStats()
         {
-            ConsoleColor originalColor = Console.ForegroundColor;
-
-            Console.ForegroundColor = _attackType.ToColor();
-            Console.Write($"{Name} ({_attackType.ToString()})");
-            Console.ForegroundColor = originalColor;
+            WriteColored($"{Name} ({_attackType.ToString()})");
             Console.Write($": {AttackPower} Attack, {Health} HP, {Speed} Speed, Level {_level}, {_experience}/{ExperienceToLevelUp} XP");
         }
 

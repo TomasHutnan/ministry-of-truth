@@ -7,7 +7,7 @@ namespace Expedition178.Entity
     {
         public MonsterType MonsterType { get; }
 
-        public Monster(string name, int attack, int health, int speed, MonsterType monsterType) : base(name, attack, health, speed)
+        public Monster(string name, int attack, int health, int speed, MonsterType monsterType) : base(name, attack, health, speed, monsterType.ToColor())
         {
             MonsterType = monsterType;
         }
@@ -16,24 +16,13 @@ namespace Expedition178.Entity
         {
             var monsterTypes = Enum.GetValues<MonsterType>();
             MonsterType = monsterTypes[Random.Shared.Next(monsterTypes.Length)];
-        }
 
-        public override void WriteName()
-        {
-            ConsoleColor originalColor = Console.ForegroundColor;
-
-            Console.ForegroundColor = MonsterType.ToColor();
-            Console.Write(Name);
-            Console.ForegroundColor = originalColor;
+            _color = MonsterType.ToColor();
         }
 
         public override void WriteStats()
         {
-            ConsoleColor originalColor = Console.ForegroundColor;
-
-            Console.ForegroundColor = MonsterType.ToColor();
-            Console.Write($"{Name} ({MonsterType.ToString()})");
-            Console.ForegroundColor = originalColor;
+            WriteColored($"{Name} ({MonsterType.ToString()})");
             Console.Write($": {AttackPower} Attack, {Health} HP, {Speed} Speed");
         }
 

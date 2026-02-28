@@ -7,6 +7,8 @@
         private int _speed;
         private int _maxHealth;
 
+        protected ConsoleColor _color;
+
         public string Name { get; }
         public int AttackPower { 
             get => _attackPower;
@@ -46,7 +48,7 @@
 
         public bool IsAlive => Health > 0;
 
-        public Entity(string name, int attackPower, int health, int speed)
+        public Entity(string name, int attackPower, int health, int speed, ConsoleColor color = ConsoleColor.White)
         {
             ArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
             Name = name;
@@ -55,16 +57,28 @@
             Health = health;
             Speed = speed;
             MaxHealth = Health;
+            _color = color;
         }
 
-        public Entity()
+        public Entity(ConsoleColor color = ConsoleColor.White)
         {
             Name = Utils.NameGenerator.GenerateName();
             AttackPower = Random.Shared.Next(1, 11);
             Health = Random.Shared.Next(1, 11);
             Speed = Random.Shared.Next(1, 11);
             MaxHealth = Health;
+            _color = color;
         }
+
+        protected void WriteColored(string text)
+        {
+            ConsoleColor originalColor = Console.ForegroundColor;
+            Console.ForegroundColor = _color;
+            Console.Write(text);
+            Console.ForegroundColor = originalColor;
+        }
+
+        public void WriteName() => WriteColored(Name);
 
         public virtual void TakeDamage(int damage)
         {
@@ -82,8 +96,6 @@
         {
             Health = _maxHealth;
         }
-
-        public abstract void WriteName();
         public abstract void WriteStats();
     }
 }
