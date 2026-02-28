@@ -92,7 +92,6 @@ namespace Expedition178.Team
 
         public int GainExperience(int experienceGained)
         {
-            // int experienceGained = Random.Shared.Next(100, 200);
             int levelUpCount = 0;
             foreach (Adventurer adventurer in _adventurers)
             {
