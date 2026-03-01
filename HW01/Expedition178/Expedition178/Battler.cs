@@ -4,7 +4,7 @@ using Expedition178.Entity;
 
 namespace Expedition178
 {
-    internal class Battler : IBattle
+    public class Battler : IBattle
     {
         public Team.Team Fight(Player player, Enemy enemy)
         {

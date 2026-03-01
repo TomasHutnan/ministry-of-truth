@@ -35,6 +35,15 @@ namespace Expedition178.Team
             Console.WriteLine(".");
         }
 
+        public Player(Adventurer[] adventurers)
+        {
+            ArgumentOutOfRangeException.ThrowIfNotEqual(adventurers.Length, 3, nameof(adventurers));
+            for (int i = 0; i < _adventurers.Length; i++)
+            {
+                _adventurers[i] = adventurers[i];
+            }
+        }
+
         public override void WriteStats()
         {
             for (int i = 0; i < _adventurers.Length; i++)

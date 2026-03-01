@@ -14,6 +14,15 @@ namespace Expedition178.Team
             }
         }
 
+        public Enemy(Monster[] monsters)
+        {
+            ArgumentOutOfRangeException.ThrowIfNotEqual(monsters.Length, 3, nameof(monsters));
+            for (int i = 0; i < _monsters.Length; i++)
+            {
+                _monsters[i] = monsters[i];
+            }
+        }
+
         public override void WriteStats()
         {
             for (int i = 0; i < _monsters.Length; i++)
