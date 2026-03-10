@@ -211,11 +211,13 @@ namespace Expedition178.Test.Battler
         public void Fight_ReturnsPlayer_WhenAllMonstersDefeated()
         {
             Adventurer adventurer = TestHelpers.CreateAdventurer(name: "Strong Adventurer", attack: 100, health: 100, speed: 10);
+            Adventurer defeatedAdventurer1 = TestHelpers.CreateAdventurer(name: "Defeated Adventurer 1", attack: 0, health: 0, speed: 0);
+            Adventurer defeatedAdventurer2 = TestHelpers.CreateAdventurer(name: "Defeated Adventurer 2", attack: 0, health: 0, speed: 0);
             Monster monster1 = TestHelpers.CreateMonster(name: "Weak Monster 1", attack: 1, health: 10, speed: 1);
             Monster monster2 = TestHelpers.CreateMonster(name: "Weak Monster 2", attack: 1, health: 10, speed: 1);
             Monster monster3 = TestHelpers.CreateMonster(name: "Weak Monster 3", attack: 1, health: 10, speed: 1);
 
-            Player player = new([adventurer, new Adventurer(), new Adventurer()]);
+            Player player = new([adventurer, defeatedAdventurer1, defeatedAdventurer2]);
             Enemy enemy = new([monster1, monster2, monster3]);
 
             Expedition178.Battler battler = new();
@@ -236,9 +238,11 @@ namespace Expedition178.Test.Battler
             Adventurer adventurer2 = TestHelpers.CreateAdventurer(name: "Weak Adventurer 2", attack: 1, health: 10, speed: 1);
             Adventurer adventurer3 = TestHelpers.CreateAdventurer(name: "Weak Adventurer 3", attack: 1, health: 10, speed: 1);
             Monster monster = TestHelpers.CreateMonster(name: "Strong Monster", attack: 100, health: 100, speed: 10);
+            Monster defeatedMonster1 = TestHelpers.CreateMonster(name: "Defeated Monster 1", attack: 0, health: 0, speed: 0);
+            Monster defeatedMonster2 = TestHelpers.CreateMonster(name: "Defeated Monster 2", attack: 0, health: 0, speed: 0);
 
             Player player = new([adventurer1, adventurer2, adventurer3]);
-            Enemy enemy = new([monster, new Monster(), new Monster()]);
+            Enemy enemy = new([monster, defeatedMonster1, defeatedMonster2]);
 
             Expedition178.Battler battler = new();
             Team.Team winner = battler.Fight(player, enemy);
@@ -282,11 +286,12 @@ namespace Expedition178.Test.Battler
         {
             Adventurer adventurer1 = TestHelpers.CreateAdventurer(name: "Adventurer 1", attack: 50, health: 100, speed: 10);
             Adventurer adventurer2 = TestHelpers.CreateAdventurer(name: "Adventurer 2", attack: 50, health: 100, speed: 10);
+            Adventurer defeatedAdventurer = TestHelpers.CreateAdventurer(name: "Defeated Adventurer", attack: 0, health: 0, speed: 0);
             Monster monster1 = TestHelpers.CreateMonster(name: "Monster 1", attack: 10, health: 30, speed: 5);
             Monster monster2 = TestHelpers.CreateMonster(name: "Monster 2", attack: 10, health: 30, speed: 5);
             Monster monster3 = TestHelpers.CreateMonster(name: "Monster 3", attack: 10, health: 30, speed: 5);
 
-            Player player = new([adventurer1, adventurer2, new Adventurer()]);
+            Player player = new([adventurer1, adventurer2, defeatedAdventurer]);
             Enemy enemy = new([monster1, monster2, monster3]);
 
             Expedition178.Battler battler = new();
@@ -305,11 +310,13 @@ namespace Expedition178.Test.Battler
         public void Fight_CorrectlyProgressesThroughMultipleBattles()
         {
             Adventurer adventurer = TestHelpers.CreateAdventurer(name: "Adventurer", attack: 60, health: 150, speed: 10);
+            Adventurer defeatedAdventurer1 = TestHelpers.CreateAdventurer(name: "Defeated Adventurer 1", attack: 0, health: 0, speed: 0);
+            Adventurer defeatedAdventurer2 = TestHelpers.CreateAdventurer(name: "Defeated Adventurer 2", attack: 0, health: 0, speed: 0);
             Monster monster1 = TestHelpers.CreateMonster(name: "Monster 1", attack: 25, health: 40, speed: 15);
             Monster monster2 = TestHelpers.CreateMonster(name: "Monster 2", attack: 30, health: 80, speed: 5);
             Monster monster3 = TestHelpers.CreateMonster(name: "Monster 3", attack: 35, health: 40, speed: 15);
 
-            Player player = new([adventurer, new Adventurer(), new Adventurer()]);
+            Player player = new([adventurer, defeatedAdventurer1, defeatedAdventurer2]);
             Enemy enemy = new([monster1, monster2, monster3]);
 
             Expedition178.Battler battler = new();
@@ -328,11 +335,13 @@ namespace Expedition178.Test.Battler
         public void Fight_RespectSpeedStat_InDeterminingTurnOrder()
         {
             Adventurer fastAdventurer = TestHelpers.CreateAdventurer(name: "Fast Adventurer", attack: 50, health: 1, speed: 20);
+            Adventurer defeatedAdventurer1 = TestHelpers.CreateAdventurer(name: "Defeated Adventurer 1", attack: 0, health: 0, speed: 0);
+            Adventurer defeatedAdventurer2 = TestHelpers.CreateAdventurer(name: "Defeated Adventurer 2", attack: 0, health: 0, speed: 0);
             Monster slowMonster1 = TestHelpers.CreateMonster(name: "Slow Monster 1", attack: 50, health: 10, speed: 1);
             Monster slowMonster2 = TestHelpers.CreateMonster(name: "Slow Monster 2", attack: 50, health: 10, speed: 1);
             Monster slowMonster3 = TestHelpers.CreateMonster(name: "Slow Monster 3", attack: 50, health: 10, speed: 1);
 
-            Player player = new([fastAdventurer, new Adventurer(), new Adventurer()]);
+            Player player = new([fastAdventurer, defeatedAdventurer1, defeatedAdventurer2]);
             Enemy enemy = new([slowMonster1, slowMonster2, slowMonster3]);
 
             Expedition178.Battler battler = new();
