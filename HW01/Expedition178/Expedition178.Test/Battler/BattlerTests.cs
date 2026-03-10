@@ -143,7 +143,7 @@ namespace Expedition178.Test.Battler
         [InlineData(AttackType.Light, MonsterType.Nature)]
         public void Round_AppliesAttackMultiplier_OnResistance(AttackType attackType, MonsterType monsterType)
         {
-            Adventurer adventurer = TestHelpers.CreateAdventurer(attack: 100, health: 1, speed: 2, type: attackType);
+            Adventurer adventurer = TestHelpers.CreateAdventurer(attack: 101, health: 1, speed: 2, type: attackType);
             Monster monsterWithLowHp = TestHelpers.CreateMonster(attack: 10, health: 50, speed: 1, type: monsterType);
             Monster monsterWithTooMuchHp = TestHelpers.CreateMonster(attack: 10, health: 51, speed: 1, type: monsterType);
 
@@ -190,6 +190,20 @@ namespace Expedition178.Test.Battler
 
             Assert.Equal(40, adventurer.Health);
             Assert.True(adventurer.IsAlive);
+        }
+
+        [Fact]
+        public void Round_ResistanceRoundsDamageDown_WhenAttackIsOdd()
+        {
+            Adventurer adventurer = TestHelpers.CreateAdventurer(attack: 101, health: 1, speed: 2, type: AttackType.Physical);
+            Monster monster = TestHelpers.CreateMonster(attack: 10, health: 51, speed: 1, type: MonsterType.Shadow);
+
+            Expedition178.Battler battler = new();
+            Entity.Entity winner = battler.Round(adventurer, monster);
+
+            Assert.Equal(monster, winner);
+            Assert.Equal(1, monster.Health);
+            Assert.Equal(0, adventurer.Health);
         }
 
         // Fight tests

@@ -39,7 +39,13 @@ namespace Expedition178.Entity
                 throw new InvalidOperationException($"{monster} is dead and cannot be attacked.");
 
             decimal multiplier = monster.MonsterType.AttackMultiplier(_attackType);
-            int damage = (int)Math.Ceiling(AttackPower * multiplier);
+            decimal rawDamage = AttackPower * multiplier;
+            int damage = multiplier switch
+            {
+                1.5m => (int)Math.Ceiling(rawDamage),
+                0.5m => (int)Math.Floor(rawDamage),
+                _ => (int)rawDamage
+            };
 
             monster.TakeDamage(damage);
             return damage;
