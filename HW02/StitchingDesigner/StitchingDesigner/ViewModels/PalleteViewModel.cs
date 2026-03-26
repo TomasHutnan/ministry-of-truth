@@ -12,18 +12,18 @@ namespace StitchingDesigner.ViewModels
         private const string FlossCsvAssetName = "threadcolors_dmc_rgb.csv";
         private const int SearchDebounceMilliseconds = 300;
 
-        private readonly Dictionary<string, Floss> _idToFloss;
-        private readonly List<Floss> _allFlosses;
+        private readonly Dictionary<string, FlossModel> _idToFloss;
+        private readonly List<FlossModel> _allFlosses;
         private CancellationTokenSource? _searchDebounceCts;
 
         [ObservableProperty]
-        public partial Floss? SelectedFloss { get; set; }
+        public partial FlossModel? SelectedFloss { get; set; }
 
         [ObservableProperty]
         public partial string SearchText { get; set; }
 
         [ObservableProperty]
-        public partial ObservableCollection<Floss> SearchResults { get; set; }
+        public partial ObservableCollection<FlossModel> SearchResults { get; set; }
 
         public PalleteViewModel()
         {
@@ -36,7 +36,7 @@ namespace StitchingDesigner.ViewModels
             using var reader = new StreamReader(stream);
             using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
-            foreach (Floss floss in csv.GetRecords<Floss>())
+            foreach (FlossModel floss in csv.GetRecords<FlossModel>())
             {
                 _idToFloss[floss.Id] = floss;
                 _allFlosses.Add(floss);
@@ -56,7 +56,7 @@ namespace StitchingDesigner.ViewModels
         }
 
         [RelayCommand]
-        private void SelectFloss(Floss? floss)
+        private void SelectFloss(FlossModel? floss)
         {
             if (floss is null)
             {
@@ -68,13 +68,18 @@ namespace StitchingDesigner.ViewModels
 
         public bool SelectFloss(string id)
         {
-            if (_idToFloss.TryGetValue(id, out Floss? floss))
+            if (_idToFloss.TryGetValue(id, out FlossModel? floss))
             {
                 SelectedFloss = floss;
                 return true;
             }
 
             return false;
+        }
+
+        public FlossModel? GetFlossById(string id)
+        {
+            return _idToFloss.TryGetValue(id, out var floss) ? floss : null;
         }
 
         public void ResetFloss()

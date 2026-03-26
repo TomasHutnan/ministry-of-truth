@@ -12,18 +12,18 @@ public partial class GridCellViewModel : ObservableObject
     public partial int Col { get; set; }
 
     [ObservableProperty]
-    public partial Floss? Floss { get; set; }
+    public partial FlossModel? Floss { get; set; }
 
     public string Label => Floss?.Id ?? string.Empty;
 
-    public GridCellViewModel(int row, int col, Floss? floss = null)
+    public GridCellViewModel(int row, int col, FlossModel? floss = null)
     {
         Row = row;
         Col = col;
         Floss = floss;
     }
 
-    partial void OnFlossChanged(Floss? value)
+    partial void OnFlossChanged(FlossModel? value)
     {
         OnPropertyChanged(nameof(Label));
     }
