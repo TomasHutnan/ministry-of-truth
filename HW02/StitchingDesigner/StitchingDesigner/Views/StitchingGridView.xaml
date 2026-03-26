@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:StitchingDesigner.ViewModels"
+             xmlns:models="clr-namespace:StitchingDesigner.Models"
              x:Class="StitchingDesigner.Views.StitchingGridView"
              x:Name="RootPage"
              Title="StitchingGridView">
@@ -10,22 +11,47 @@
     </ContentPage.BindingContext>
 
     <Grid Padding="12" ColumnDefinitions="260,*" ColumnSpacing="12">
-        <Grid RowDefinitions="*, *" Grid.Column="0" >
-            <VerticalStackLayout Grid.Row="0" Spacing="12">
-                <Label Text="Select a Floss" FontSize="Title"/>
-                <SearchBar Placeholder="Search by ID or name..." />
-                <Label Margin="0, 10, 0, 0" Text="Currently Selected" HorizontalOptions="Center"/>
-                <HorizontalStackLayout Spacing="10">
-                    <Label
-                        Text="{Binding Pallete.SelectedFloss.Id, FallbackValue='None', TargetNullValue='None'}"
-                        TextColor="{Binding Pallete.SelectedFloss.DisplayColor, TargetNullValue='White'}"/>
-                    <Label
-                        Text="{Binding Pallete.SelectedFloss.Name, FallbackValue='None', TargetNullValue='None'}"
-                        TextColor="{Binding Pallete.SelectedFloss.DisplayColor, TargetNullValue='White'}"/>
-                </HorizontalStackLayout>
+        <Grid RowDefinitions="Auto, *, Auto" Grid.Column="0" RowSpacing="20">
+            <VerticalStackLayout Grid.Row="0" Spacing="10">
+                <Label Text="Grid Size" FontSize="Title"/>
+                <Grid ColumnDefinitions="*, *" ColumnSpacing="10">
+                    <Entry Grid.Column="0" Placeholder="Rows"/>
+                    <Entry Grid.Column="1" Placeholder="Columns"/>
+                </Grid>
+                <Button Text="Set"/>
             </VerticalStackLayout>
+            
             <VerticalStackLayout Grid.Row="1" Spacing="12">
-                <Label Text="Save your creation" FontSize="Title"/>
+                <Label Text="Floss" FontSize="Title"/>
+                <SearchBar Placeholder="Search by ID or name"
+                            Text="{Binding Pallete.SearchText}" />
+                <CollectionView ItemsSource="{Binding Pallete.SearchResults}"
+                                HeightRequest="220"
+                                SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Floss">
+                            <Button Padding="8,4"
+                                    Margin="0,2"
+                                    HorizontalOptions="Fill"
+                                    Text="{Binding Description}"
+                                    TextColor="Black"
+                                    BackgroundColor="{Binding DisplayColor}"
+                                    Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.Pallete.SelectFlossCommand}"
+                                    CommandParameter="{Binding .}" />
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+                <Label Margin="0, 10, 0, 0" Text="Currently Selected" HorizontalOptions="Center"/>
+                <Button Padding="8,4"
+                        Margin="0,2"
+                        HorizontalOptions="Fill"
+                        Text="{Binding Pallete.SelectedFloss.Description}"
+                        TextColor="Black"
+                        BackgroundColor="{Binding Pallete.SelectedFloss.DisplayColor}"/>
+            </VerticalStackLayout>
+            
+            <VerticalStackLayout Grid.Row="2" Spacing="12">
+                <Label Text="Save/Load" FontSize="Title"/>
                 <Entry Placeholder="Choose a pattern name"/>
                 <Grid ColumnDefinitions="*, *" ColumnSpacing="10">
                     <Button Grid.Column="0" Text="Save"/>
@@ -35,34 +61,34 @@
         </Grid>
 
         <Grid Grid.Column="1"
-              x:Name="GridViewport"
-              SizeChanged="OnGridViewportSizeChanged">
+            x:Name="GridViewport"
+            SizeChanged="OnGridViewportSizeChanged">
             <CollectionView ItemsSource="{Binding Cells}"
-                            SelectionMode="None"
-                            WidthRequest="{Binding GridWidth}"
-                            HeightRequest="{Binding GridHeight}"
-                            HorizontalOptions="Center"
-                            VerticalOptions="Center">
+                        SelectionMode="None"
+                        WidthRequest="{Binding GridWidth}"
+                        HeightRequest="{Binding GridHeight}"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center">
                 <CollectionView.ItemsLayout>
                     <GridItemsLayout Orientation="Vertical"
-                                     Span="{Binding GridSpan}"
-                                     HorizontalItemSpacing="0"
-                                     VerticalItemSpacing="0" />
+                                    Span="{Binding GridSpan}"
+                                    HorizontalItemSpacing="0"
+                                    VerticalItemSpacing="0" />
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="vm:GridCellViewModel">
                         <Button WidthRequest="{Binding Source={x:Reference RootPage}, Path=BindingContext.CellSize}"
-                                HeightRequest="{Binding Source={x:Reference RootPage}, Path=BindingContext.CellSize}"
-                                Padding="0"
-                                Margin="0"
-                                CornerRadius="0"
-                                BorderColor="Gray"
-                                BorderWidth="0.5"
-                                FontSize="10"
-                                Text="{Binding Label}"
-                                BackgroundColor="{Binding Floss.DisplayColor, TargetNullValue='White'}"
-                                Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.CellClickedCommand}"
-                                CommandParameter="{Binding .}" />
+                            HeightRequest="{Binding Source={x:Reference RootPage}, Path=BindingContext.CellSize}"
+                            Padding="0"
+                            Margin="0"
+                            CornerRadius="0"
+                            BorderColor="Gray"
+                            BorderWidth="0.5"
+                            FontSize="10"
+                            Text="{Binding Label}"
+                            BackgroundColor="{Binding Floss.DisplayColor, TargetNullValue='White'}"
+                            Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.CellClickedCommand}"
+                            CommandParameter="{Binding .}" />
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>

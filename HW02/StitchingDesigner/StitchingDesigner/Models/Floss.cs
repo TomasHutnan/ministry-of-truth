@@ -4,13 +4,31 @@ namespace StitchingDesigner.Models;
 
 public class Floss
 {
-    private string _hex;
+    private string _hex = "ffffff";
+    private string _name = "";
+    private string _id = "";
 
     [Name("floss")]
-    public required string Id { get; set; }
+    public required string Id
+    { 
+        get => _id; 
+        set
+        {
+            _id = value;
+            Description = $"{value} | {Name}";
+        }
+    }
 
     [Name("name")]
-    public required string Name { get; set; }
+    public required string Name
+    {
+        get => _name;
+        set
+        {
+            _name = value;
+            Description = $"{Id} | {value}";
+        }
+    }
 
     [Name("r")]
     public required int R { get; set; }
@@ -27,6 +45,7 @@ public class Floss
         get => _hex; 
         set
         {
+            _hex = value;
             try
             {
                 DisplayColor = Color.FromArgb(value);
@@ -39,4 +58,5 @@ public class Floss
     }
 
     public Color DisplayColor { get; private set; } = Colors.White;
+    public string Description { get; private set; }
 }
