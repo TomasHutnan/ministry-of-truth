@@ -31,7 +31,7 @@
                                 HeightRequest="220"
                                 SelectionMode="None">
                     <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="models:Floss">
+                        <DataTemplate x:DataType="models:FlossModel">
                             <Button Padding="8,4"
                                     Margin="0,2"
                                     HorizontalOptions="Fill"
@@ -52,11 +52,17 @@
             
             <VerticalStackLayout Spacing="12">
                 <Label Text="Save/Load" FontSize="Title"/>
-                <Entry Placeholder="Choose a pattern name"/>
+                <Entry Placeholder="Choose a pattern name"
+                       Text="{Binding PatternName}"/>
                 <Grid ColumnDefinitions="*, *" ColumnSpacing="10">
-                    <Button Grid.Column="0" Text="Save"/>
-                    <Button Grid.Column="1" Text="Load"/>
+                    <Button Grid.Column="0"
+                            Text="Save"
+                            Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.SavePatternCommand}"/>
+                    <Button Grid.Column="1"
+                            Text="Load"
+                            Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.LoadPatternCommand}"/>
                 </Grid>
+                <Label Text="{Binding LastSavedFilePath}" TextColor="Gray" LineBreakMode="CharacterWrap"/>
             </VerticalStackLayout>
         </VerticalStackLayout>
 
