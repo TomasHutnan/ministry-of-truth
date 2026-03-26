@@ -2,7 +2,7 @@
 
 namespace StitchingDesigner.Models;
 
-public class Floss
+public class FlossModel
 {
     private string _hex = "ffffff";
     private string _name = "";
