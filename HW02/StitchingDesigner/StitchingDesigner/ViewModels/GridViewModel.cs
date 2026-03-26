@@ -94,7 +94,6 @@ namespace StitchingDesigner.ViewModels
         [RelayCommand]
         private void CellClicked(GridCellViewModel? cell)
         {
-            Debug.WriteLineIf(cell is not null, $"Clicked on row {cell!.Row}, col {cell!.Col}");
             cell?.Floss = Pallete.SelectedFloss;
         }
 
