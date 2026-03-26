@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:StitchingDesigner.ViewModels"
+             x:Class="StitchingDesigner.Views.StitchingGridView"
+             x:Name="RootPage"
+             Title="StitchingGridView">
+    <ContentPage.BindingContext>
+        <vm:GridViewModel />
+    </ContentPage.BindingContext>
+
+    <Grid Padding="12" ColumnDefinitions="260,*" ColumnSpacing="12">
+        <Grid RowDefinitions="*, *" Grid.Column="0" >
+            <VerticalStackLayout Grid.Row="0" Spacing="12">
+                <Label Text="Select a Floss" FontSize="Title"/>
+                <SearchBar Placeholder="Search by ID or name..." />
+                <Label Margin="0, 10, 0, 0" Text="Selected:"/>
+                <Label Text="{Binding Pallete.SelectedFloss.Id, TargetNullValue='None'}" />
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Row="1" Spacing="12">
+                <Label Text="Save your creation" FontSize="Title"/>
+                <Entry Placeholder="Choose a pattern name"/>
+                <Grid ColumnDefinitions="*, *" ColumnSpacing="10">
+                    <Button Grid.Column="0" Text="Save"/>
+                    <Button Grid.Column="1" Text="Load"/>
+                </Grid>
+            </VerticalStackLayout>
+        </Grid>
+
+        <Grid Grid.Column="1"
+              x:Name="GridViewport"
+              SizeChanged="OnGridViewportSizeChanged">
+            <CollectionView ItemsSource="{Binding Cells}"
+                            SelectionMode="None"
+                            WidthRequest="{Binding GridWidth}"
+                            HeightRequest="{Binding GridHeight}"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical"
+                                     Span="{Binding GridSpan}"
+                                     HorizontalItemSpacing="0"
+                                     VerticalItemSpacing="0" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:GridCellViewModel">
+                        <Button WidthRequest="{Binding Source={x:Reference RootPage}, Path=BindingContext.CellSize}"
+                                HeightRequest="{Binding Source={x:Reference RootPage}, Path=BindingContext.CellSize}"
+                                Padding="0"
+                                Margin="0"
+                                CornerRadius="0"
+                                BorderColor="Gray"
+                                BorderWidth="0.5"
+                                FontSize="10"
+                                Text="{Binding Label}"
+                                BackgroundColor="{Binding DisplayColor}"
+                                Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.CellClickedCommand}"
+                                CommandParameter="{Binding .}" />
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+    </Grid>
+</ContentPage>
