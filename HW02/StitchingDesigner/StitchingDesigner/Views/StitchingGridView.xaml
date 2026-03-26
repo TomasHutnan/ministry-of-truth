@@ -15,10 +15,12 @@
             <VerticalStackLayout Grid.Row="0" Spacing="10">
                 <Label Text="Grid Size" FontSize="Title"/>
                 <Grid ColumnDefinitions="*, *" ColumnSpacing="10">
-                    <Entry Grid.Column="0" Placeholder="Rows"/>
-                    <Entry Grid.Column="1" Placeholder="Columns"/>
+                    <Entry Grid.Column="0" Placeholder="Rows" Text="{Binding EntryRowCount}"/>
+                    <Entry Grid.Column="1" Placeholder="Columns" Text="{Binding EntryColumnCount}"/>
                 </Grid>
-                <Button Text="Set"/>
+                <Button
+                    Text="Set"
+                    Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.SetSizeCommand}"/>
             </VerticalStackLayout>
             
             <VerticalStackLayout Grid.Row="1" Spacing="12">

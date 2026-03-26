@@ -58,5 +58,5 @@ public class Floss
     }
 
     public Color DisplayColor { get; private set; } = Colors.White;
-    public string Description { get; private set; }
+    public string Description { get; private set; } = "";
 }

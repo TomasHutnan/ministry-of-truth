@@ -19,6 +19,12 @@ namespace StitchingDesigner.ViewModels
         [ObservableProperty]
         public partial int ColumnCount { get; set; }
 
+        [ObservableProperty]
+        public partial int EntryRowCount { get; set; }
+
+        [ObservableProperty]
+        public partial int EntryColumnCount { get; set; }
+
         private double _cellSize = 32;
         public double CellSize
         {
@@ -46,7 +52,9 @@ namespace StitchingDesigner.ViewModels
 
         public GridViewModel()
         {
-            UpdateSize(10, 10);
+            EntryRowCount = 10;
+            EntryColumnCount = 15;
+            SetSize();
         }
 
         partial void OnColumnCountChanged(int value)
@@ -74,7 +82,13 @@ namespace StitchingDesigner.ViewModels
             cell?.Floss = Pallete.SelectedFloss;
         }
 
-        public void UpdateSize(int rows, int cols)
+        [RelayCommand]
+        private void SetSize()
+        {
+            UpdateSize(EntryRowCount, EntryColumnCount);
+        }
+
+        private void UpdateSize(int rows, int cols)
         {
             ArgumentOutOfRangeException.ThrowIfNegative(rows);
             ArgumentOutOfRangeException.ThrowIfNegative(cols);
