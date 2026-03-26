@@ -4,6 +4,8 @@ namespace StitchingDesigner.Models;
 
 public class Floss
 {
+    private string _hex;
+
     [Name("floss")]
     public required string Id { get; set; }
 
@@ -20,5 +22,21 @@ public class Floss
     public required int B { get; set; }
 
     [Name("hex")]
-    public required string Hex { get; set; }
+    public required string Hex
+    { 
+        get => _hex; 
+        set
+        {
+            try
+            {
+                DisplayColor = Color.FromArgb(value);
+            }
+            catch
+            {
+                DisplayColor = Colors.White;
+            }
+        }
+    }
+
+    public Color DisplayColor { get; private set; } = Colors.White;
 }
