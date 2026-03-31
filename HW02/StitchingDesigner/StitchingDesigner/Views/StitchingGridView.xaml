@@ -11,28 +11,29 @@
     </ContentPage.BindingContext>
 
     <Grid Padding="12" ColumnDefinitions="260,*" ColumnSpacing="12">
-        <VerticalStackLayout Grid.Column="0" Spacing="25">
-            <VerticalStackLayout Spacing="10">
-                <Label Text="Grid Size" FontSize="Title"/>
-                <Grid ColumnDefinitions="*, *" ColumnSpacing="10">
-                    <Entry Grid.Column="0" Placeholder="Rows" Text="{Binding EntryRowCount}"/>
-                    <Entry Grid.Column="1" Placeholder="Columns" Text="{Binding EntryColumnCount}"/>
-                </Grid>
-                <Button
+        <ScrollView Grid.Column="0" Padding="15">
+            <VerticalStackLayout Spacing="25">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Grid Size" FontSize="Title"/>
+                    <Grid ColumnDefinitions="*, *" ColumnSpacing="10">
+                        <Entry Grid.Column="0" Placeholder="Rows" Text="{Binding EntryRowCount}"/>
+                        <Entry Grid.Column="1" Placeholder="Columns" Text="{Binding EntryColumnCount}"/>
+                    </Grid>
+                    <Button
                     Text="Set"
                     Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.SetSizeCommand}"/>
-            </VerticalStackLayout>
-            
-            <VerticalStackLayout Spacing="12">
-                <Label Text="Floss" FontSize="Title"/>
-                <SearchBar Placeholder="Search by ID or name"
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Floss" FontSize="Title"/>
+                    <SearchBar Placeholder="Search by ID or name"
                             Text="{Binding Pallete.SearchText}" />
-                <CollectionView ItemsSource="{Binding Pallete.SearchResults}"
+                    <CollectionView ItemsSource="{Binding Pallete.SearchResults}"
                                 HeightRequest="220"
                                 SelectionMode="None">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="models:FlossModel">
-                            <Button Padding="8,4"
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:FlossModel">
+                                <Button Padding="8,4"
                                     Margin="0,2"
                                     HorizontalOptions="Fill"
                                     Text="{Binding Description}"
@@ -40,31 +41,32 @@
                                     BackgroundColor="{Binding DisplayColor}"
                                     Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.Pallete.SelectFlossCommand}"
                                     CommandParameter="{Binding .}" />
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-                <Label Margin="0, 10, 0, 0" Text="Currently Selected" HorizontalOptions="Center"/>
-                <Button HorizontalOptions="Fill"
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                    <Label Margin="0, 10, 0, 0" Text="Currently Selected" HorizontalOptions="Center"/>
+                    <Button HorizontalOptions="Fill"
                         Text="{Binding Pallete.SelectedFloss.Description}"
                         TextColor="Black"
                         BackgroundColor="{Binding Pallete.SelectedFloss.DisplayColor}"/>
-            </VerticalStackLayout>
-            
-            <VerticalStackLayout Spacing="12">
-                <Label Text="Save/Load" FontSize="Title"/>
-                <Entry Placeholder="Choose a pattern name"
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Save/Load" FontSize="Title"/>
+                    <Entry Placeholder="Choose a pattern name"
                        Text="{Binding PatternName}"/>
-                <Grid ColumnDefinitions="*, *" ColumnSpacing="10">
-                    <Button Grid.Column="0"
+                    <Grid ColumnDefinitions="*, *" ColumnSpacing="10">
+                        <Button Grid.Column="0"
                             Text="Save"
                             Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.SavePatternCommand}"/>
-                    <Button Grid.Column="1"
+                        <Button Grid.Column="1"
                             Text="Load"
                             Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.LoadPatternCommand}"/>
-                </Grid>
-                <Label Text="{Binding LastSavedFilePath}" TextColor="Gray" LineBreakMode="CharacterWrap"/>
+                    </Grid>
+                    <Label Text="{Binding LastSavedFilePath}" TextColor="Gray" LineBreakMode="CharacterWrap"/>
+                </VerticalStackLayout>
             </VerticalStackLayout>
-        </VerticalStackLayout>
+        </ScrollView>
 
         <Grid Grid.Column="1"
             x:Name="GridViewport"
