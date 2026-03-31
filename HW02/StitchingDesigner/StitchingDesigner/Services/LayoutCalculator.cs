@@ -1,14 +1,8 @@
 namespace StitchingDesigner.Services;
 
-/// <summary>
-/// Calculates optimal grid layout dimensions based on available space and grid configuration.
-/// </summary>
-public class LayoutCalculator
+public static class LayoutCalculator
 {
-    /// <summary>
-    /// Fits the grid into the available space by distributing space evenly across rows and columns.
-    /// </summary>
-    public LayoutResult Calculate(int rowCount, int columnCount, double availableWidth, double availableHeight, double defaultCellSize)
+    public static LayoutResult Calculate(int rowCount, int columnCount, double availableWidth, double availableHeight, double defaultCellSize)
     {
         if (rowCount <= 0 || columnCount <= 0)
         {

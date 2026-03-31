@@ -5,6 +5,7 @@ namespace StitchingDesigner.Services;
 
 public class JsonGridStorageService : IGridStorageService
 {
+    private const string PatternsDirectory = "Patterns";
     private static readonly JsonSerializerOptions SerializerOptions = new()
     {
         WriteIndented = true
@@ -13,7 +14,7 @@ public class JsonGridStorageService : IGridStorageService
     public async Task SaveAsync(string patternName, GridModel grid, CancellationToken cancellationToken = default)
     {
         var filePath = GetPatternPath(patternName);
-        Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
+        EnsurePatternsDirectoryExists();
 
         await using var stream = File.Create(filePath);
         await JsonSerializer.SerializeAsync(stream, grid, SerializerOptions, cancellationToken);
@@ -31,14 +32,18 @@ public class JsonGridStorageService : IGridStorageService
         return await JsonSerializer.DeserializeAsync<GridModel>(stream, SerializerOptions, cancellationToken);
     }
 
-    private static string GetPatternPath(string patternName)
+    public string GetPatternPath(string patternName)
     {
-        var safeName = string.Join("_", patternName.Split(Path.GetInvalidFileNameChars(), StringSplitOptions.RemoveEmptyEntries)).Trim();
-        if (string.IsNullOrWhiteSpace(safeName))
-        {
-            safeName = "pattern";
-        }
+        var patternsFolder = Path.Combine(FileSystem.AppDataDirectory, PatternsDirectory);
+        return Path.Combine(patternsFolder, $"{patternName}.json");
+    }
 
-        return Path.Combine(FileSystem.AppDataDirectory, "Patterns", $"{safeName}.json");
+    private static void EnsurePatternsDirectoryExists()
+    {
+        var patternsFolder = Path.Combine(FileSystem.AppDataDirectory, PatternsDirectory);
+        if (!Directory.Exists(patternsFolder))
+        {
+            Directory.CreateDirectory(patternsFolder);
+        }
     }
 }

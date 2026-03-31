@@ -10,8 +10,6 @@ namespace StitchingDesigner.ViewModels
     public partial class GridViewModel : ObservableObject
     {
         private readonly IGridStorageService _gridStorageService;
-        private readonly LayoutCalculator _layoutCalculator;
-        private readonly GridResizer _gridResizer;
         private double _availableWidth;
         private double _availableHeight;
 
@@ -61,25 +59,13 @@ namespace StitchingDesigner.ViewModels
 
         public PalleteViewModel Pallete { get; }
 
-        public GridViewModel() : this(new JsonGridStorageService(), new PalleteViewModel(), new LayoutCalculator(), new GridResizer())
+        public GridViewModel() : this(new JsonGridStorageService(), new PalleteViewModel())
         {
         }
 
         internal GridViewModel(IGridStorageService gridStorageService, PalleteViewModel pallete)
-            : this(gridStorageService, pallete, new LayoutCalculator(), new GridResizer())
-        {
-        }
-
-        internal GridViewModel(IGridStorageService gridStorageService, PalleteViewModel pallete, LayoutCalculator layoutCalculator)
-            : this(gridStorageService, pallete, layoutCalculator, new GridResizer())
-        {
-        }
-
-        internal GridViewModel(IGridStorageService gridStorageService, PalleteViewModel pallete, LayoutCalculator layoutCalculator, GridResizer gridResizer)
         {
             _gridStorageService = gridStorageService;
-            _layoutCalculator = layoutCalculator;
-            _gridResizer = gridResizer;
             Pallete = pallete;
 
             EntryRowCount = 10;
@@ -128,7 +114,7 @@ namespace StitchingDesigner.ViewModels
                      .ToArray());
 
             await _gridStorageService.SaveAsync(PatternName, gridModel);
-            LastSavedFilePath = Path.Combine(FileSystem.AppDataDirectory, "Patterns", $"{PatternName}.json");
+            LastSavedFilePath = _gridStorageService.GetPatternPath(PatternName);
         }
 
         [RelayCommand]
@@ -158,7 +144,7 @@ namespace StitchingDesigner.ViewModels
 
         private void UpdateSize(int rows, int cols)
         {
-            var resized = _gridResizer.Resize(Cells, rows, cols);
+            var resized = GridResizer.Resize(Cells, rows, cols);
             RowCount = rows;
             ColumnCount = cols;
             Cells = resized;
@@ -167,7 +153,7 @@ namespace StitchingDesigner.ViewModels
 
         private void RecalculateCellSize()
         {
-            var layout = _layoutCalculator.Calculate(RowCount, ColumnCount, _availableWidth, _availableHeight, _cellSize);
+            var layout = LayoutCalculator.Calculate(RowCount, ColumnCount, _availableWidth, _availableHeight, _cellSize);
             CellSize = layout.CellSize;
             GridWidth = layout.GridWidth;
             GridHeight = layout.GridHeight;

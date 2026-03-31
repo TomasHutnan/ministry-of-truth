@@ -3,20 +3,13 @@ using System.Collections.ObjectModel;
 
 namespace StitchingDesigner.Services;
 
-/// <summary>
-/// Service for resizing grids while preserving existing cell data.
-/// </summary>
-public class GridResizer
+public static class GridResizer
 {
     /// <summary>
     /// Resize a grid to new dimensions, preserving floss data where possible.
-    /// </summary>
-    /// <param name="currentCells">The current grid cells</param>
-    /// <param name="newRowCount">Target number of rows</param>
-    /// <param name="newColumnCount">Target number of columns</param>
     /// <returns>A new collection of cells with the specified dimensions</returns>
     /// <exception cref="ArgumentOutOfRangeException">If dimensions are negative</exception>
-    public ObservableCollection<GridCellViewModel> Resize(
+    public static ObservableCollection<GridCellViewModel> Resize(
         IEnumerable<GridCellViewModel> currentCells,
         int newRowCount,
         int newColumnCount)
