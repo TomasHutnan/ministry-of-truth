@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using StitchingDesigner.Models;
 using StitchingDesigner.Services;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 
 namespace StitchingDesigner.ViewModels
 {
