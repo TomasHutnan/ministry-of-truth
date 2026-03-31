@@ -11,6 +11,7 @@ namespace StitchingDesigner.ViewModels
     {
         private readonly IGridStorageService _gridStorageService;
         private readonly LayoutCalculator _layoutCalculator;
+        private readonly GridResizer _gridResizer;
         private double _availableWidth;
         private double _availableHeight;
 
@@ -60,19 +61,25 @@ namespace StitchingDesigner.ViewModels
 
         public PalleteViewModel Pallete { get; }
 
-        public GridViewModel() : this(new JsonGridStorageService(), new PalleteViewModel(), new LayoutCalculator())
+        public GridViewModel() : this(new JsonGridStorageService(), new PalleteViewModel(), new LayoutCalculator(), new GridResizer())
         {
         }
 
         internal GridViewModel(IGridStorageService gridStorageService, PalleteViewModel pallete)
-            : this(gridStorageService, pallete, new LayoutCalculator())
+            : this(gridStorageService, pallete, new LayoutCalculator(), new GridResizer())
         {
         }
 
         internal GridViewModel(IGridStorageService gridStorageService, PalleteViewModel pallete, LayoutCalculator layoutCalculator)
+            : this(gridStorageService, pallete, layoutCalculator, new GridResizer())
+        {
+        }
+
+        internal GridViewModel(IGridStorageService gridStorageService, PalleteViewModel pallete, LayoutCalculator layoutCalculator, GridResizer gridResizer)
         {
             _gridStorageService = gridStorageService;
             _layoutCalculator = layoutCalculator;
+            _gridResizer = gridResizer;
             Pallete = pallete;
 
             EntryRowCount = 10;
@@ -151,22 +158,7 @@ namespace StitchingDesigner.ViewModels
 
         private void UpdateSize(int rows, int cols)
         {
-            ArgumentOutOfRangeException.ThrowIfNegative(rows);
-            ArgumentOutOfRangeException.ThrowIfNegative(cols);
-
-            var existingFloss = Cells.ToDictionary(cell => (cell.Row, cell.Col), cell => cell.Floss);
-            var resized = new ObservableCollection<GridCellViewModel>();
-
-            for (int r = 0; r < rows; r++)
-            {
-                for (int c = 0; c < cols; c++)
-                {
-                    existingFloss.TryGetValue((r, c), out var floss);
-                    var cell = new GridCellViewModel(r, c, floss);
-                    resized.Add(cell);
-                }
-            }
-
+            var resized = _gridResizer.Resize(Cells, rows, cols);
             RowCount = rows;
             ColumnCount = cols;
             Cells = resized;
