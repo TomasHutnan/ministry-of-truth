@@ -113,7 +113,7 @@ namespace StitchingDesigner.ViewModels
                      .ToArray());
 
             await _gridStorageService.SaveAsync(PatternName, gridModel);
-            LastSavedFilePath = _gridStorageService.GetPatternPath(PatternName);
+            LastSavedFilePath = "Saved to: " + _gridStorageService.GetPatternPath(PatternName);
         }
 
         [RelayCommand]
@@ -139,6 +139,7 @@ namespace StitchingDesigner.ViewModels
                     Cells[index].Floss = floss;
                 }
             }
+            LastSavedFilePath = "Loaded from: " + _gridStorageService.GetPatternPath(PatternName);
         }
 
         private void UpdateSize(int rows, int cols)
