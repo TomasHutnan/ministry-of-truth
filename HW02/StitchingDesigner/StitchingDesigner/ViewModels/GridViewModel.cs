@@ -10,6 +10,7 @@ namespace StitchingDesigner.ViewModels
     public partial class GridViewModel : ObservableObject
     {
         private readonly IGridStorageService _gridStorageService;
+        private readonly LayoutCalculator _layoutCalculator;
         private double _availableWidth;
         private double _availableHeight;
 
@@ -59,13 +60,19 @@ namespace StitchingDesigner.ViewModels
 
         public PalleteViewModel Pallete { get; }
 
-        public GridViewModel() : this(new JsonGridStorageService(), new PalleteViewModel())
+        public GridViewModel() : this(new JsonGridStorageService(), new PalleteViewModel(), new LayoutCalculator())
         {
         }
 
         internal GridViewModel(IGridStorageService gridStorageService, PalleteViewModel pallete)
+            : this(gridStorageService, pallete, new LayoutCalculator())
+        {
+        }
+
+        internal GridViewModel(IGridStorageService gridStorageService, PalleteViewModel pallete, LayoutCalculator layoutCalculator)
         {
             _gridStorageService = gridStorageService;
+            _layoutCalculator = layoutCalculator;
             Pallete = pallete;
 
             EntryRowCount = 10;
@@ -168,23 +175,10 @@ namespace StitchingDesigner.ViewModels
 
         private void RecalculateCellSize()
         {
-            if (RowCount <= 0 || ColumnCount <= 0)
-            {
-                return;
-            }
-
-            var widthBound = _availableWidth > 0 ? Math.Floor(_availableWidth / ColumnCount) : double.MaxValue;
-            var heightBound = _availableHeight > 0 ? Math.Floor(_availableHeight / RowCount) : double.MaxValue;
-            var boundedCellSize = Math.Min(widthBound, heightBound);
-
-            if (boundedCellSize == double.MaxValue)
-            {
-                boundedCellSize = CellSize;
-            }
-
-            CellSize = Math.Max(1, boundedCellSize);
-            GridWidth = CellSize * ColumnCount;
-            GridHeight = CellSize * RowCount;
+            var layout = _layoutCalculator.Calculate(RowCount, ColumnCount, _availableWidth, _availableHeight, _cellSize);
+            CellSize = layout.CellSize;
+            GridWidth = layout.GridWidth;
+            GridHeight = layout.GridHeight;
         }
     }
 }
