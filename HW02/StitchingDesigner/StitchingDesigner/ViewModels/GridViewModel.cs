@@ -8,7 +8,7 @@ namespace StitchingDesigner.ViewModels
 {
     public partial class GridViewModel : ObservableObject
     {
-        private const string invalidFileNameMessage = "Invalid name. Pattern name must consist of a non-empty sequence of alphanumeric characters, dashes or undescores.";
+        private const string InvalidFileNameMessage = "Invalid name. Pattern name must consist of a non-empty sequence of alphanumeric characters, dashes or undescores.";
 
         private readonly IGridStorageService _gridStorageService;
         private double _availableWidth;
@@ -109,7 +109,7 @@ namespace StitchingDesigner.ViewModels
         {
             if (!_gridStorageService.IsNameValid(PatternName))
             {
-                LastSavedFilePath = invalidFileNameMessage;
+                LastSavedFilePath = InvalidFileNameMessage;
                 return;
             }
 
@@ -129,7 +129,7 @@ namespace StitchingDesigner.ViewModels
         {
             if (!_gridStorageService.IsNameValid(PatternName))
             {
-                LastSavedFilePath = invalidFileNameMessage;
+                LastSavedFilePath = InvalidFileNameMessage;
                 return;
             }
 
