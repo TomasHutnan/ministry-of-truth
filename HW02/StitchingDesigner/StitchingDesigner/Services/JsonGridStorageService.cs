@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using GridModel = StitchingDesigner.Models.GridModel;
 
 namespace StitchingDesigner.Services;
@@ -6,6 +7,8 @@ namespace StitchingDesigner.Services;
 public class JsonGridStorageService : IGridStorageService
 {
     private const string PatternsDirectory = "Patterns";
+    private readonly Regex fileNameRegex = new Regex(@"^[a-z0-9_-]+$", RegexOptions.IgnoreCase);
+
     private static readonly JsonSerializerOptions SerializerOptions = new()
     {
         WriteIndented = true
@@ -36,6 +39,11 @@ public class JsonGridStorageService : IGridStorageService
     {
         var patternsFolder = Path.Combine(FileSystem.AppDataDirectory, PatternsDirectory);
         return Path.Combine(patternsFolder, $"{patternName}.json");
+    }
+
+    public bool IsNameValid(string patternName)
+    {
+        return !patternName.IsWhiteSpace() && fileNameRegex.IsMatch(patternName);
     }
 
     private static void EnsurePatternsDirectoryExists()

@@ -8,6 +8,8 @@ namespace StitchingDesigner.ViewModels
 {
     public partial class GridViewModel : ObservableObject
     {
+        private const string invalidFileNameMessage = "Invalid name. Pattern name must consist of a non-empty sequence of alphanumeric characters, dashes or undescores.";
+
         private readonly IGridStorageService _gridStorageService;
         private double _availableWidth;
         private double _availableHeight;
@@ -105,6 +107,12 @@ namespace StitchingDesigner.ViewModels
         [RelayCommand]
         private async Task SavePatternAsync()
         {
+            if (!_gridStorageService.IsNameValid(PatternName))
+            {
+                LastSavedFilePath = invalidFileNameMessage;
+                return;
+            }
+
             var gridModel = new GridModel(
                 RowCount,
                 ColumnCount,
@@ -119,6 +127,12 @@ namespace StitchingDesigner.ViewModels
         [RelayCommand]
         private async Task LoadPatternAsync()
         {
+            if (!_gridStorageService.IsNameValid(PatternName))
+            {
+                LastSavedFilePath = invalidFileNameMessage;
+                return;
+            }
+
             var loaded = await _gridStorageService.LoadAsync(PatternName);
             if (loaded is null)
             {
