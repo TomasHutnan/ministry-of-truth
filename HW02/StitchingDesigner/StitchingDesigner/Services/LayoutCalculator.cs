@@ -1,7 +1,11 @@
+using System.Diagnostics;
+
 namespace StitchingDesigner.Services;
 
 public static class LayoutCalculator
 {
+    private const double MinimumCellSize = 40;
+
     public static LayoutResult Calculate(int rowCount, int columnCount, double availableWidth, double availableHeight, double defaultCellSize)
     {
         if (rowCount <= 0 || columnCount <= 0)
@@ -18,9 +22,11 @@ public static class LayoutCalculator
             boundedCellSize = defaultCellSize;
         }
 
-        var cellSize = Math.Max(1, boundedCellSize);
+        var cellSize = Math.Max(MinimumCellSize, boundedCellSize);
         var gridWidth = cellSize * columnCount;
         var gridHeight = cellSize * rowCount;
+
+        Debug.WriteLine($"{cellSize}, {gridWidth}, {gridHeight}");
 
         return new LayoutResult(cellSize, gridWidth, gridHeight);
     }
