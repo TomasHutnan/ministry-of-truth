@@ -32,7 +32,14 @@ public class JsonGridStorageService : IGridStorageService
         }
 
         await using var stream = File.OpenRead(filePath);
-        return await JsonSerializer.DeserializeAsync<GridModel>(stream, SerializerOptions, cancellationToken);
+        try
+        {
+            return await JsonSerializer.DeserializeAsync<GridModel>(stream, SerializerOptions, cancellationToken);
+        }
+        catch (JsonException)
+        {
+            return null;
+        }
     }
 
     public string GetPatternPath(string patternName)
