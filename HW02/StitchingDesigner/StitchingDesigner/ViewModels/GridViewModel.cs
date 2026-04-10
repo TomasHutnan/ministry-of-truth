@@ -158,6 +158,11 @@ namespace StitchingDesigner.ViewModels
 
         private void UpdateSize(int rows, int cols)
         {
+            if (rows < 0 || cols < 0)
+            {
+                return;
+            }
+
             var resized = GridResizer.Resize(Cells, rows, cols);
             RowCount = rows;
             ColumnCount = cols;
