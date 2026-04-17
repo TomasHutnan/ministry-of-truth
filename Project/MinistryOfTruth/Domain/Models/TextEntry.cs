@@ -1,5 +1,7 @@
 ﻿namespace MinistryOfTruth.Domain.Models;
 
-public class TextEntry
+public record class TextEntry(
+    string Id,
+    string Content)
 {
 }

@@ -1,5 +1,9 @@
-﻿namespace MinistryOfTruth.Domain.Interfaces;
+﻿using MinistryOfTruth.Domain.Models;
+
+namespace MinistryOfTruth.Domain.Interfaces;
 
 public interface IViolationRepository
 {
+    Task<IReadOnlyCollection<Violation>> LoadAllAsync();
 }
+
