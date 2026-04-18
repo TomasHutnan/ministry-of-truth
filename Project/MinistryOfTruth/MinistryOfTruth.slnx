@@ -1,3 +1,11 @@
 <Solution>
-  <Project Path="App/App.csproj" />
+  <Folder Name="/Solution Items/">
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="App/MinistryOfTruth.App.csproj">
+    <Deploy Solution="Debug|*" />
+  </Project>
+  <Project Path="Data/MinistryOfTruth.Data.csproj" />
+  <Project Path="Domain/MinistryOfTruth.Domain.csproj" />
+  <Project Path="ViewModels/MinistryOfTruth.ViewModels.csproj" />
 </Solution>
