@@ -101,11 +101,11 @@ public class ComplexityCalculator
         }
 
         // Normalize
-        int avgWordLen = totalWordChars / totalWords
-        int avgSentenceLen = totalWords / totalSentences
-        int punctDensity = punctCount / totalWords
-        int numDensity = (nonAlphaGroupCount + capitalizedWordCount) / totalWords
-        int wordCount = totalWords
+        int avgWordLen = totalWordChars / totalWords;
+        int avgSentenceLen = totalWords / totalSentences;
+        int punctDensity = punctCount / totalWords;
+        int numDensity = (nonAlphaGroupCount + capitalizedWordCount) / totalWords;
+        int wordCount = totalWords;
 
         // Clamp
         double A = Math.Clamp((avgWordLen - 3) / 9, 0, 1);         // 3–12 chars
