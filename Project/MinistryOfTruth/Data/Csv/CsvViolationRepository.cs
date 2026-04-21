@@ -14,7 +14,7 @@ public class CsvViolationRepository : IViolationRepository
 
     public Task<IReadOnlyCollection<Violation>> LoadAllAsync()
     {
-        if (!File.Exists(_violationsCsvPath))
+        if (!RepositoryExists())
         {
             return Task.FromResult<IReadOnlyCollection<Violation>>(Array.Empty<Violation>());
         }
@@ -72,5 +72,10 @@ public class CsvViolationRepository : IViolationRepository
                 File.Delete(tempPath);
             }
         }
+    }
+
+    public bool RepositoryExists()
+    {
+        return File.Exists(_violationsCsvPath);
     }
 }

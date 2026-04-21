@@ -14,7 +14,7 @@ public class CsvRuleRepository : IRuleRepository
 
     public Task<IReadOnlyCollection<Rule>> LoadAllAsync()
     {
-        if (!File.Exists(_rulesCsvPath))
+        if (!RepositoryExists())
         {
             return Task.FromResult<IReadOnlyCollection<Rule>>(Array.Empty<Rule>());
         }
@@ -72,5 +72,10 @@ public class CsvRuleRepository : IRuleRepository
                 File.Delete(tempPath);
             }
         }
+    }
+
+    public bool RepositoryExists()
+    {
+        return File.Exists(_rulesCsvPath);
     }
 }

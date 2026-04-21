@@ -6,4 +6,5 @@ public interface ITextRepository
 {
     Task<IReadOnlyCollection<TextEntry>> LoadAllAsync();
     Task SetAllAsync(IEnumerable<TextEntry> texts);
+    bool RepositoryExists();
 }

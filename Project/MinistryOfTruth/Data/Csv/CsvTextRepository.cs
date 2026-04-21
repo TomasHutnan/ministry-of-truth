@@ -14,7 +14,7 @@ public class CsvTextRepository : ITextRepository
 
     public Task<IReadOnlyCollection<TextEntry>> LoadAllAsync()
     {
-        if (!File.Exists(_textsCsvPath))
+        if (!RepositoryExists())
         {
             return Task.FromResult<IReadOnlyCollection<TextEntry>>(Array.Empty<TextEntry>());
         }
@@ -71,5 +71,10 @@ public class CsvTextRepository : ITextRepository
                 File.Delete(tempPath);
             }
         }
+    }
+
+    public bool RepositoryExists()
+    {
+        return File.Exists(_textsCsvPath);
     }
 }
