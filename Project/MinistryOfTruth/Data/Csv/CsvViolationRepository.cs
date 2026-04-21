@@ -32,4 +32,45 @@ public class CsvViolationRepository : IViolationRepository
 
         return Task.FromResult<IReadOnlyCollection<Violation>>(violations);
     }
+
+    public async Task SetAllAsync(IEnumerable<Violation> violations)
+    {
+        ArgumentNullException.ThrowIfNull(violations);
+
+        string directory = Path.GetDirectoryName(_violationsCsvPath)!;
+        Directory.CreateDirectory(directory);
+
+        string tempPath = Path.Combine(directory, $"{Path.GetRandomFileName()}.tmp");
+
+        try
+        {
+            await using (var stream = File.Create(tempPath))
+            await using (var writer = new StreamWriter(stream))
+            await using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            {
+                await csv.WriteRecordsAsync(violations.Select(violation => new CsvViolationRow
+                {
+                    TextId = violation.TextId,
+                    RuleId = violation.RuleId,
+                    Justification = violation.Justification
+                }));
+            }
+
+            if (File.Exists(_violationsCsvPath))
+            {
+                File.Replace(tempPath, _violationsCsvPath, null);
+            }
+            else
+            {
+                File.Move(tempPath, _violationsCsvPath);
+            }
+        }
+        finally
+        {
+            if (File.Exists(tempPath))
+            {
+                File.Delete(tempPath);
+            }
+        }
+    }
 }

@@ -32,4 +32,45 @@ public class CsvRuleRepository : IRuleRepository
 
         return Task.FromResult<IReadOnlyCollection<Rule>>(rules);
     }
+
+    public async Task SetAllAsync(IEnumerable<Rule> rules)
+    {
+        ArgumentNullException.ThrowIfNull(rules);
+
+        string directory = Path.GetDirectoryName(_rulesCsvPath)!;
+        Directory.CreateDirectory(directory);
+
+        string tempPath = Path.Combine(directory, $"{Path.GetRandomFileName()}.tmp");
+
+        try
+        {
+            await using (var stream = File.Create(tempPath))
+            await using (var writer = new StreamWriter(stream))
+            await using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            {
+                await csv.WriteRecordsAsync(rules.Select(rule => new CsvRuleRow
+                {
+                    Id = rule.Id,
+                    Keyword = rule.Keyword,
+                    Number = rule.IsPlural ? "plural" : "singular"
+                }));
+            }
+
+            if (File.Exists(_rulesCsvPath))
+            {
+                File.Replace(tempPath, _rulesCsvPath, null);
+            }
+            else
+            {
+                File.Move(tempPath, _rulesCsvPath);
+            }
+        }
+        finally
+        {
+            if (File.Exists(tempPath))
+            {
+                File.Delete(tempPath);
+            }
+        }
+    }
 }

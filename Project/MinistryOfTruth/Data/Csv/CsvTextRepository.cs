@@ -32,4 +32,44 @@ public class CsvTextRepository : ITextRepository
 
         return Task.FromResult<IReadOnlyCollection<TextEntry>>(texts);
     }
+
+    public async Task SetAllAsync(IEnumerable<TextEntry> texts)
+    {
+        ArgumentNullException.ThrowIfNull(texts);
+
+        string directory = Path.GetDirectoryName(_textsCsvPath)!;
+        Directory.CreateDirectory(directory);
+
+        string tempPath = Path.Combine(directory, $"{Path.GetRandomFileName()}.tmp");
+
+        try
+        {
+            await using (var stream = File.Create(tempPath))
+            await using (var writer = new StreamWriter(stream))
+            await using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            {
+                await csv.WriteRecordsAsync(texts.Select(text => new CsvTextRow
+                {
+                    Id = text.Id,
+                    Content = text.Content
+                }));
+            }
+
+            if (File.Exists(_textsCsvPath))
+            {
+                File.Replace(tempPath, _textsCsvPath, null);
+            }
+            else
+            {
+                File.Move(tempPath, _textsCsvPath);
+            }
+        }
+        finally
+        {
+            if (File.Exists(tempPath))
+            {
+                File.Delete(tempPath);
+            }
+        }
+    }
 }
