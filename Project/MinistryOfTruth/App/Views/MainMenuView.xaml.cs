@@ -1,6 +1,6 @@
 namespace App.Views;
 
-public partial class MainMenuView : ContentPage
+public partial class MainMenuView : ContentView
 {
 	public MainMenuView()
 	{

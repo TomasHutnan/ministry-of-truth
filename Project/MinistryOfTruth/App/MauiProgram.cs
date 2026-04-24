@@ -1,7 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using App.Views;
+using Microsoft.Extensions.Logging;
 using MinistryOfTruth.Domain.Engine;
 using MinistryOfTruth.Domain.Interfaces;
+using MinistryOfTruth.Data.Files;
 using MinistryOfTruth.ViewModels;
+using MinistryOfTruth.Data.Csv;
 
 namespace App
 {
@@ -20,16 +23,34 @@ namespace App
                 });
 
 #if DEBUG
-    		builder.Logging.AddDebug();
+			builder.Logging.AddDebug();
 #endif
 
-            builder.Services.AddSingleton<INavigationService, MauiNavigationService>();
-            builder.Services.AddSingleton<IGameEngine, GameEngine>();
+            builder.Services.AddSingleton<IHighScoreStore, FileHighScoreStore>();
+            builder.Services.AddSingleton<IRuleRepository, CsvRuleRepository>();
+            builder.Services.AddSingleton<ITextRepository, CsvTextRepository>();
+            builder.Services.AddSingleton<IViolationRepository, CsvViolationRepository>();
 
+            builder.Services.AddSingleton<ComplexityCalculator>();
+
+            builder.Services.AddSingleton<IGameEngine, GameEngine>();
+            builder.Services.AddSingleton<INavigationService, MauiNavigationService>();
+
+            builder.Services.AddSingleton<AppRootPage>();
+
+            builder.Services.AddTransient<StartView>();
             builder.Services.AddTransient<StartViewModel>();
+
+            builder.Services.AddTransient<LoadingView>();
             builder.Services.AddTransient<LoadingViewModel>();
+
+            builder.Services.AddTransient<MainMenuView>();
             builder.Services.AddTransient<MainMenuViewModel>();
+
+            builder.Services.AddTransient<GameView>();
             builder.Services.AddTransient<GameViewModel>();
+
+            builder.Services.AddTransient<ResultsView>();
             builder.Services.AddTransient<ResultsViewModel>();
 
             return builder.Build();

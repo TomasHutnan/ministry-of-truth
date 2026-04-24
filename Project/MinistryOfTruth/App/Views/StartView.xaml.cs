@@ -1,9 +1,12 @@
+using MinistryOfTruth.ViewModels;
+
 namespace App.Views;
 
-public partial class StartView : ContentPage
+public partial class StartView : ContentView
 {
-	public StartView()
-	{
-		InitializeComponent();
-	}
+    public StartView(StartViewModel viewModel)
+    {
+        InitializeComponent();
+        BindingContext = viewModel;
+    }
 }

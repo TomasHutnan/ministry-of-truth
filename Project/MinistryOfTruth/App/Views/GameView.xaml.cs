@@ -1,6 +1,6 @@
 namespace App.Views;
 
-public partial class GameView : ContentPage
+public partial class GameView : ContentView
 {
 	public GameView()
 	{

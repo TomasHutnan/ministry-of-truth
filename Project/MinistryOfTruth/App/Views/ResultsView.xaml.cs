@@ -1,6 +1,6 @@
 namespace App.Views;
 
-public partial class ResultsView : ContentPage
+public partial class ResultsView : ContentView
 {
 	public ResultsView()
 	{
