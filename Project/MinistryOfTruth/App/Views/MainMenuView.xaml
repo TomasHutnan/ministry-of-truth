@@ -5,7 +5,7 @@
              Title="MainMenuView">
     <VerticalStackLayout>
         <Label 
-            Text="Welcome to .NET MAUI!"
+            Text="Welcome to the Main Menu View!"
             VerticalOptions="Center" 
             HorizontalOptions="Center" />
     </VerticalStackLayout>

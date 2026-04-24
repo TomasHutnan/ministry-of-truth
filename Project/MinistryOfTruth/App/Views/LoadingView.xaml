@@ -5,7 +5,7 @@
              Title="LoadingView">
     <VerticalStackLayout>
         <Label 
-            Text="Welcome to .NET MAUI!"
+            Text="Welcome to the Loading View!"
             VerticalOptions="Center" 
             HorizontalOptions="Center" />
     </VerticalStackLayout>
