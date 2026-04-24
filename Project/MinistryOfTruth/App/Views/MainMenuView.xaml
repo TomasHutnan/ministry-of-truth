@@ -2,12 +2,55 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:MinistryOfTruth.ViewModels;assembly=MinistryOfTruth.ViewModels"
+             xmlns:converters="clr-namespace:App.Converters"
              x:Class="App.Views.MainMenuView"
-             x:DataType="vm:MainMenuViewModel">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to the Main Menu View!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+             x:Name="Root"
+             x:DataType="vm:MainMenuViewModel"
+             BackgroundColor="{StaticResource BkgAbyss}">
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <converters:WidthToFontSizeConverter x:Key="WidthToFontSizeConverter" MinFontSize="12" MaxFontSize="112" />
+        </ResourceDictionary>
+    </ContentView.Resources>
+    <VerticalStackLayout Padding="{Binding Source={x:Reference Root}, Path=Width, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.03}">
+        <Label
+            Text="Ministry of Truth"
+            FontFamily="Titles"
+            CharacterSpacing="0.1"
+            FontSize="{Binding Source={x:Reference Root}, Path=Width, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.06}"
+            TextColor="{StaticResource TextOldPaper}"
+            VerticalOptions="Center"
+            HorizontalOptions="Start" />
+        <Grid ColumnDefinitions="*,*" ColumnSpacing="50" Margin="0, 50, 0, 0">
+            <VerticalStackLayout Grid.Column="0" Spacing="25">
+                <Button
+                    Text="Play"
+                    Style="{StaticResource MinistryButton}"
+                    FontSize="{Binding Source={x:Reference Root}, Path=Width, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"
+                    HorizontalOptions="Start"/>
+                <Button
+                    Text="Load Text Set"
+                    Style="{StaticResource MinistryButton}"
+                    FontSize="{Binding Source={x:Reference Root}, Path=Width, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"
+                    HorizontalOptions="Start"/>
+                <Button
+                    Text="Reset to Defaults"
+                    Style="{StaticResource MinistryButton}"
+                    FontSize="{Binding Source={x:Reference Root}, Path=Width, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"
+                    HorizontalOptions="Start"/>
+                <Button
+                    Margin="0, 50, 0, 0"
+                    Text="Quit"
+                    Style="{StaticResource MinistryButton}"
+                    FontSize="{Binding Source={x:Reference Root}, Path=Width, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"
+                    HorizontalOptions="Start"/>
+            </VerticalStackLayout>
+            <Label Grid.Column="1" 
+                   Text="To know and not to know, to be conscious of complete truthfulness while telling carefully constructed lies, to hold simultaneously two opinions which cancelled out, knowing them to be contradictory and believing in both of them, to use logic against logic, to ..."
+                   TextColor="{StaticResource TextDimmed}"
+                   FontFamily="Typewriter"
+                   FontSize="{Binding Source={x:Reference Root}, Path=Width, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.03}"
+                   />
+        </Grid>
     </VerticalStackLayout>
 </ContentView>

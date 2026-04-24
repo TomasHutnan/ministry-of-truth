@@ -33,6 +33,14 @@
     <Color x:Key="MinistryAmber">#FFB000</Color>
     <Color x:Key="PaperGray">#A9A9A9</Color>
 
+    <Color x:Key="BkgAbyss">#0F0F0F</Color>
+    <Color x:Key="BkgSurface">#1E1E1E</Color>
+    <Color x:Key="MinistryGreen">#4A5D4E</Color>
+    <Color x:Key="MinistryMutedGold">#917B50</Color>
+    <Color x:Key="TextOldPaper">#B8B2A1</Color>
+    <Color x:Key="TextDimmed">#6E6A5E</Color>
+    <Color x:Key="ViolationRed">#7A2A2A</Color>
+
     <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Primary}"/>
     <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource Secondary}"/>
     <SolidColorBrush x:Key="TertiaryBrush" Color="{StaticResource Tertiary}"/>
