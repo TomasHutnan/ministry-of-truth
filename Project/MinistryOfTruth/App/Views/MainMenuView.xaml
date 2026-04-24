@@ -58,12 +58,11 @@
                         FontSize="{Binding Source={x:Reference Root}, Path=Width, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"/>
                 </VerticalStackLayout>
             </VerticalStackLayout>
-            <Label Grid.Column="1" 
-                   Text="To know and not to know, to be conscious of complete truthfulness while telling carefully constructed ██, to hold simultaneously two opinions which cancelled out, knowing them to be ███████ and believing in both of them, to use ███ against logic ..."
+            <Label Grid.Column="1"
+                   Text="{Binding MenuTickerText}"
                    TextColor="{StaticResource TextDimmed}"
                    FontFamily="Typewriter"
-                   FontSize="{Binding Source={x:Reference Root}, Path=Width, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.03}"
-                   />
+                   FontSize="{Binding Source={x:Reference Root}, Path=Width, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.03}"/>
         </Grid>
     </VerticalStackLayout>
 </ContentView>
