@@ -5,7 +5,8 @@
              xmlns:converters="clr-namespace:App.Converters"
              x:Class="App.Views.StartView"
              x:Name="Root"
-             x:DataType="vm:StartViewModel">
+             x:DataType="vm:StartViewModel"
+             BackgroundColor="{StaticResource DeepConcrete}">
     <ContentView.Resources>
         <ResourceDictionary>
             <converters:WidthToFontSizeConverter x:Key="WidthToFontSizeConverter" MinFontSize="12" MaxFontSize="200" />
@@ -15,14 +16,21 @@
     <Grid RowDefinitions="*,*">
         <Label Grid.Row="0"
                Text="Ministry of Truth"
+               TextColor="{StaticResource TerminalGreen}"
                FontSize="{Binding Source={x:Reference Root}, Path=Width, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.12}"
+               CharacterSpacing="0.1"
                FontFamily="Titles"
                VerticalOptions="Center"
                HorizontalOptions="Center"
                Padding="30" />
         <Button Grid.Row="1"
-                Text="Start"
+                Text="START"
+                TextColor="{StaticResource TerminalGreen}"
+                BackgroundColor="Transparent"
+                BorderColor="{StaticResource TerminalGreen}"
+                BorderWidth="2"
                 FontSize="{Binding Source={x:Reference Root}, Path=Width, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.06}"
+                FontFamily="Labels"
                 HorizontalOptions="Center"
                 VerticalOptions="Center" />
     </Grid>

@@ -5,6 +5,7 @@ public class AppRootPage : ContentPage
     public AppRootPage()
     {
         NavigationPage.SetHasNavigationBar(this, false);
+        SetDynamicResource(BackgroundColorProperty, "DeepConcrete");
     }
 
     public void SetCurrentView(View view, object? bindingContext, string? title)
