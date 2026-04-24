@@ -8,7 +8,7 @@ public class GameEngine(
     IRuleRepository ruleRepository,
     ITextRepository textRepository,
     IViolationRepository violationRepository,
-    ComplexityCalculator complexityCalculator)
+    ComplexityCalculator complexityCalculator) : IGameEngine
 {
     private IHighScoreStore _highScoreStore = highScoreStore;
     private IRuleRepository _ruleRepository = ruleRepository;
@@ -24,8 +24,12 @@ public class GameEngine(
 
     private Dictionary<int, List<TextEntry>> _textsByComplexity = [];
 
+    private bool _isInitialized = false;
+    private bool _isRunning = false;
     public async Task InitializeAsync()
     {
+        _isInitialized = false;
+
         // IO
         var ruleTask = _ruleRepository.LoadAllAsync();
         var textTask = _textRepository.LoadAllAsync();
@@ -74,5 +78,21 @@ public class GameEngine(
         _textById = textById;
         _violationByTextRuleIds = violationByTextRuleIds;
         _textsByComplexity = textsByComplexity;
+
+        _isInitialized = true;
+    }
+
+    public void StartGame()
+    {
+        if (!_isInitialized)
+        {
+            throw new InvalidOperationException("Invalid state to start a game. GameEngine must first be initialized.");
+        }
+        if (_isRunning)
+        {
+            throw new InvalidOperationException("Game is already running.");
+        }
+
+        _isRunning = true;
     }
 }
