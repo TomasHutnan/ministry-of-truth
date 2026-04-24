@@ -46,7 +46,7 @@
                     HorizontalOptions="Start"/>
             </VerticalStackLayout>
             <Label Grid.Column="1" 
-                   Text="To know and not to know, to be conscious of complete truthfulness while telling carefully constructed lies, to hold simultaneously two opinions which cancelled out, knowing them to be contradictory and believing in both of them, to use logic against logic, to ..."
+                   Text="To know and not to know, to be conscious of complete truthfulness while telling carefully constructed ██, to hold simultaneously two opinions which cancelled out, knowing them to be ███████ and believing in both of them, to use ███ against logic ..."
                    TextColor="{StaticResource TextDimmed}"
                    FontFamily="Typewriter"
                    FontSize="{Binding Source={x:Reference Root}, Path=Width, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.03}"
