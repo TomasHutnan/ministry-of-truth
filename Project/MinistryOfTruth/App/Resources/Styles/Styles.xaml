@@ -50,8 +50,7 @@
 
     <Style TargetType="Button" x:Key="MinistryButton">
         <Setter Property="BackgroundColor" Value="Transparent" />
-        <Setter Property="TextColor" Value="{StaticResource TextOldPaper}" />
-        <Setter Property="BorderColor" Value="{StaticResource MinistryGreen}" />
+        <Setter Property="TextColor" Value="{StaticResource MinistryMutedGold}" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="FontFamily" Value="Labels" />
     </Style>

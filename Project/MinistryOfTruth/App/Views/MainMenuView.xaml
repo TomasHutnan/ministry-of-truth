@@ -22,7 +22,7 @@
             VerticalOptions="Center"
             HorizontalOptions="Start" />
         <Grid ColumnDefinitions="*,*" ColumnSpacing="50" Margin="0, 50, 0, 0">
-            <VerticalStackLayout Grid.Column="0" Spacing="25">
+            <VerticalStackLayout Grid.Column="0" Spacing="20">
                 <Button
                     Text="Play"
                     Style="{StaticResource MinistryButton}"
@@ -39,11 +39,24 @@
                     FontSize="{Binding Source={x:Reference Root}, Path=Width, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"
                     HorizontalOptions="Start"/>
                 <Button
-                    Margin="0, 50, 0, 0"
+                    Margin="0, 30, 0, 0"
                     Text="Quit"
                     Style="{StaticResource MinistryButton}"
                     FontSize="{Binding Source={x:Reference Root}, Path=Width, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"
                     HorizontalOptions="Start"/>
+
+                <VerticalStackLayout Margin="0, 75, 0, 0">
+                    <Label
+                        Text="High-Score"
+                        FontFamily="Labels"
+                        TextColor="{StaticResource TextDimmed}"
+                        FontSize="{Binding Source={x:Reference Root}, Path=Width, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.015}"/>
+                    <Label
+                        Text="23789"
+                        FontFamily="Labels"
+                        TextColor="{StaticResource MinistryMutedGold}"
+                        FontSize="{Binding Source={x:Reference Root}, Path=Width, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"/>
+                </VerticalStackLayout>
             </VerticalStackLayout>
             <Label Grid.Column="1" 
                    Text="To know and not to know, to be conscious of complete truthfulness while telling carefully constructed ██, to hold simultaneously two opinions which cancelled out, knowing them to be ███████ and believing in both of them, to use ███ against logic ..."
