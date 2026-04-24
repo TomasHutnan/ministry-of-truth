@@ -2,15 +2,28 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:MinistryOfTruth.ViewModels;assembly=MinistryOfTruth.ViewModels"
+             xmlns:converters="clr-namespace:App.Converters"
              x:Class="App.Views.StartView"
+             x:Name="Root"
              x:DataType="vm:StartViewModel">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to the Start View!"
-            FontFamily="Titles"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-        <Button
-            Text="Start"/>
-    </VerticalStackLayout>
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <converters:WidthToFontSizeConverter x:Key="WidthToFontSizeConverter" MinFontSize="12" MaxFontSize="200" />
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+    <Grid RowDefinitions="*,*">
+        <Label Grid.Row="0"
+               Text="Ministry of Truth"
+               FontSize="{Binding Source={x:Reference Root}, Path=Width, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.12}"
+               FontFamily="Titles"
+               VerticalOptions="Center"
+               HorizontalOptions="Center"
+               Padding="30" />
+        <Button Grid.Row="1"
+                Text="Start"
+                FontSize="{Binding Source={x:Reference Root}, Path=Width, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.06}"
+                HorizontalOptions="Center"
+                VerticalOptions="Center" />
+    </Grid>
 </ContentView>
