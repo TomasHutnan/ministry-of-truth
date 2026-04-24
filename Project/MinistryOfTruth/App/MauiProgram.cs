@@ -14,8 +14,9 @@ namespace App
                 .UseMauiApp<App>()
                 .ConfigureFonts(fonts =>
                 {
-                    fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                    fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+                    fonts.AddFont("Anton-Regular.ttf", "Titles");
+                    fonts.AddFont("JetBrainsMono-VariableFont_wght.ttf", "Labels");
+                    fonts.AddFont("SpecialElite-Regular.ttf", "Typewriter");
                 });
 
 #if DEBUG
