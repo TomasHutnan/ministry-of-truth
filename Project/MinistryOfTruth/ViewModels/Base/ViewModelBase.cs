@@ -1,34 +1,10 @@
-﻿using MinistryOfTruth.Domain.Interfaces;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using MinistryOfTruth.Domain.Interfaces;
 
 namespace MinistryOfTruth.ViewModels.Base;
 
-public abstract class ViewModelBase(INavigationService navigationService, IGameEngine gameEngine) : INotifyPropertyChanged
+public abstract partial class ViewModelBase(INavigationService navigationService, IGameEngine gameEngine) : ObservableObject
 {
     protected readonly INavigationService _navigationService = navigationService;
     protected readonly IGameEngine _gameEngine = gameEngine;
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    protected virtual void OnPropertyChanged(
-        [CallerMemberName] string? propertyName = null)
-    {
-        PropertyChanged?.Invoke(
-            this,
-            new PropertyChangedEventArgs(propertyName));
-    }
-
-    protected bool SetProperty<T>(
-        ref T backingField,
-        T value,
-        [CallerMemberName] string? propertyName = null)
-    {
-        if (EqualityComparer<T>.Default.Equals(backingField, value))
-            return false;
-
-        backingField = value;
-        OnPropertyChanged(propertyName);
-        return true;
-    }
 }

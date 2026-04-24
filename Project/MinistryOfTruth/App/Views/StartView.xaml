@@ -32,6 +32,7 @@
                 FontSize="{Binding Source={x:Reference Root}, Path=Width, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.06}"
                 FontFamily="Labels"
                 HorizontalOptions="Center"
-                VerticalOptions="Center" />
+                VerticalOptions="Center" 
+                Command="{Binding StartCommand}"/>
     </Grid>
 </ContentView>
