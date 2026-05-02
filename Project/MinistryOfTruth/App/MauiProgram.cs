@@ -4,8 +4,8 @@ using MinistryOfTruth.Domain.Engine;
 using MinistryOfTruth.Domain.Interfaces;
 using MinistryOfTruth.Data.Files;
 using MinistryOfTruth.ViewModels;
-using MinistryOfTruth.ViewModels.Interfaces;
 using MinistryOfTruth.Data.Csv;
+using MinistryOfTruth.Domain.Presentation;
 
 namespace App
 {
@@ -36,7 +36,8 @@ namespace App
 
             builder.Services.AddSingleton<IGameEngine, GameEngine>();
             builder.Services.AddSingleton<INavigationService, MauiNavigationService>();
-            builder.Services.AddSingleton<IMenuTextSource, MenuTextSource>();
+            builder.Services.AddSingleton<ITickerTextSource, MenuTickerTextSource>();
+            builder.Services.AddSingleton<ITextTicker, TextTicker>();
 
             builder.Services.AddSingleton<AppRootPage>();
 

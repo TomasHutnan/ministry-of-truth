@@ -1,10 +1,10 @@
-using MinistryOfTruth.ViewModels.Interfaces;
+using MinistryOfTruth.Domain.Interfaces;
 
 namespace App;
 
-public class MenuTextSource : IMenuTextSource
+public class MenuTickerTextSource : ITickerTextSource
 {
-    public async Task<string> LoadMenuTextAsync(CancellationToken cancellationToken = default)
+    public async Task<string> LoadTickerTextAsync(CancellationToken cancellationToken = default)
     {
         await using var stream = await FileSystem.OpenAppPackageFileAsync("menu_text.txt");
         using var reader = new StreamReader(stream);
