@@ -7,6 +7,7 @@ using MinistryOfTruth.ViewModels;
 using MinistryOfTruth.Data.Csv;
 using MinistryOfTruth.Domain.Presentation;
 using CommunityToolkit.Maui;
+using App.Services;
 
 namespace App
 {
@@ -33,11 +34,13 @@ namespace App
             builder.Services.AddSingleton<IRuleRepository, CsvRuleRepository>();
             builder.Services.AddSingleton<ITextRepository, CsvTextRepository>();
             builder.Services.AddSingleton<IViolationRepository, CsvViolationRepository>();
+            builder.Services.AddSingleton<IDocumentGenerator, DocumentGenerator>();
 
             builder.Services.AddSingleton<ComplexityCalculator>();
 
             builder.Services.AddSingleton<IGameEngine, GameEngine>();
             builder.Services.AddSingleton<INavigationService, MauiNavigationService>();
+            builder.Services.AddSingleton<MinistryOfTruth.ViewModels.Interfaces.IPopupService, PopupService>();
             builder.Services.AddSingleton<ITickerTextSource, MenuTickerTextSource>();
             builder.Services.AddSingleton<ITextTicker, TextTicker>();
 

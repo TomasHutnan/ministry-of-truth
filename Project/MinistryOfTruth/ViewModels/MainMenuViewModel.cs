@@ -33,11 +33,6 @@ public partial class MainMenuViewModel : ViewModelBase
         Task.Run(() => HighScore = highScoreStore.LoadAsync().Result);
     }
 
-    ~MainMenuViewModel()
-    {
-        _ticker.StopTicker();
-    }
-
     [RelayCommand]
     public async Task Play()
     {
@@ -68,6 +63,11 @@ public partial class MainMenuViewModel : ViewModelBase
     public async Task StartMenuTickerAsync()
     {
         await _ticker.StartTickerAsync();
+    }
+
+    public void StopMenuTicker()
+    {
+        _ticker.StopTicker();
     }
 
     private void TickerTextUpdated(object? sender, string newText)

@@ -25,22 +25,19 @@
             <VerticalStackLayout Spacing="{Binding Source={x:Reference Root}, Path=Height, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.015}" Grid.Column="0">
                 <Button
                     Text="Play"
+                    Command="{Binding PlayCommand}"
                     Style="{StaticResource MinistryButton}"
                     FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"
                     HorizontalOptions="Start"/>
                 <Button
                     Text="Load Text Set"
+                    Command="{Binding LoadTextSetCommand}"
                     Style="{StaticResource MinistryButton}"
                     FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"
                     HorizontalOptions="Start"/>
                 <Button
                     Text="Reset to Defaults"
-                    Style="{StaticResource MinistryButton}"
-                    FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"
-                    HorizontalOptions="Start"/>
-                <Button
-                    Margin="0, 30, 0, 0"
-                    Text="Quit"
+                    Command="{Binding ResetToDefaultsCommand}"
                     Style="{StaticResource MinistryButton}"
                     FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"
                     HorizontalOptions="Start"/>
@@ -52,7 +49,7 @@
                         TextColor="{StaticResource TextDimmed}"
                         FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.015}"/>
                     <Label
-                        Text="23789"
+                        Text="{Binding HighScore}"
                         FontFamily="Labels"
                         TextColor="{StaticResource MinistryMutedGold}"
                         FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"/>
