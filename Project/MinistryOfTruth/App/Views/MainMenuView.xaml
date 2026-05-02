@@ -22,7 +22,7 @@
             VerticalOptions="Center"
             HorizontalOptions="Start" />
         <Grid ColumnDefinitions="*,*" ColumnSpacing="50" Margin="0, 50, 0, 0">
-            <VerticalStackLayout Grid.Column="0" Spacing="20">
+            <VerticalStackLayout Spacing="{Binding Source={x:Reference Root}, Path=Height, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.015}" Grid.Column="0">
                 <Button
                     Text="Play"
                     Style="{StaticResource MinistryButton}"
