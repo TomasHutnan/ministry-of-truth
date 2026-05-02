@@ -21,6 +21,17 @@ public class DocumentGenerator(
 
     private Dictionary<int, List<TextEntry>> _textsByComplexity = [];
 
+    private const int _minTextsPerDay = 3;
+    private const int _textsAddedEveryTwoDays = 1;
+    private const int _maxExtraTexts = 2;
+    private const int _minComplexity = 1;
+    private const int _maxComplexity = 5;
+    private const int _targetComplexityRandomCount = 3;
+    private const int _outOfRangePickCount = 1;
+    private const int _ruleNamePreviewLength = 3;
+
+    private static readonly Random _random = new();
+
     private bool _isInitialized = false;
 
     public async Task InitializeAsync()
@@ -78,7 +89,91 @@ public class DocumentGenerator(
 
     public DayPackage CreateDayPackage(int dayNumber, int targetComplexity)
     {
-        // TODO
-        return new DayPackage("TODO", new Queue<TextEntry>(), new HashSet<string>());
+        if (!_isInitialized)
+        {
+            throw new InvalidOperationException("Document generator is not initialized.");
+        }
+
+        int clampedTargetComplexity = Math.Clamp(targetComplexity, _minComplexity, _maxComplexity);
+        int textCount = _minTextsPerDay + ((dayNumber - 1) / 2) * _textsAddedEveryTwoDays;
+        textCount = Math.Min(textCount, _minTextsPerDay + _maxExtraTexts);
+
+        List<TextEntry> chosenTexts = new(textCount);
+        HashSet<string> violationIds = new();
+
+        var availableTexts = _textById.Values.ToList();
+        var targetTexts = _textsByComplexity.TryGetValue(clampedTargetComplexity, out var textsAtTarget)
+            ? textsAtTarget
+            : [];
+
+        IEnumerable<TextEntry> primaryPool = targetTexts.Count > 0 ? targetTexts : availableTexts;
+        int preferredCount = Math.Min(textCount, Math.Max(1, (int)Math.Ceiling(textCount * 0.7)));
+
+        AddRandomUniqueTexts(chosenTexts, primaryPool, preferredCount);
+        if (chosenTexts.Count < textCount)
+        {
+            var secondaryPool = targetTexts.Count > 0
+                ? availableTexts.Where(text => !_textsByComplexity.TryGetValue(clampedTargetComplexity, out var list) || !list.Contains(text))
+                : availableTexts;
+
+            AddRandomUniqueTexts(chosenTexts, secondaryPool, textCount - chosenTexts.Count);
+        }
+
+        if (chosenTexts.Count < textCount)
+        {
+            AddRandomUniqueTexts(chosenTexts, availableTexts, textCount - chosenTexts.Count);
+        }
+
+        foreach (var text in chosenTexts)
+        {
+            foreach (var rule in _ruleById.Values)
+            {
+                if (_violationByTextRuleIds.ContainsKey((text.Id, rule.Id)))
+                {
+                    violationIds.Add(text.Id);
+                    break;
+                }
+            }
+        }
+
+        string ruleDescription = BuildRuleDescription(clampedTargetComplexity);
+        return new DayPackage(ruleDescription, new Queue<TextEntry>(chosenTexts), violationIds);
+    }
+
+    private void AddRandomUniqueTexts(List<TextEntry> chosenTexts, IEnumerable<TextEntry> source, int count)
+    {
+        if (count <= 0)
+        {
+            return;
+        }
+
+        var candidates = source.Where(text => !chosenTexts.Any(chosen => chosen.Id == text.Id)).ToList();
+        while (count > 0 && candidates.Count > 0)
+        {
+            int index = _random.Next(candidates.Count);
+            chosenTexts.Add(candidates[index]);
+            candidates.RemoveAt(index);
+            count--;
+        }
+    }
+
+    private string BuildRuleDescription(int targetComplexity)
+    {
+        var ruleKeywords = _ruleById.Values
+            .OrderBy(rule => rule.Keyword)
+            .Take(_ruleNamePreviewLength)
+            .Select(rule => rule.Keyword);
+
+        string complexityText = targetComplexity switch
+        {
+            1 => "very simple",
+            2 => "simple",
+            3 => "moderate",
+            4 => "complex",
+            5 => "very complex",
+            _ => "unknown"
+        };
+
+        return $"Today's texts are {complexityText}. Keep an eye on: {string.Join(", ", ruleKeywords)}.";
     }
 }

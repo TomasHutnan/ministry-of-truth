@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using MinistryOfTruth.Domain.Engine;
 using MinistryOfTruth.Domain.Interfaces;
 using MinistryOfTruth.Data.Files;
+using MinistryOfTruth.Data.Services;
 using MinistryOfTruth.ViewModels;
 using MinistryOfTruth.Data.Csv;
 using MinistryOfTruth.Domain.Presentation;
@@ -35,6 +36,8 @@ namespace App
             builder.Services.AddSingleton<ITextRepository, CsvTextRepository>();
             builder.Services.AddSingleton<IViolationRepository, CsvViolationRepository>();
             builder.Services.AddSingleton<IDocumentGenerator, DocumentGenerator>();
+            builder.Services.AddSingleton<IAppAssetProvider, MauiAppAssetProvider>();
+            builder.Services.AddSingleton<ITextSetLoader, TextSetService>();
 
             builder.Services.AddSingleton<ComplexityCalculator>();
 

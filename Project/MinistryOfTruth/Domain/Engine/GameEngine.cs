@@ -70,22 +70,25 @@ public class GameEngine(
             _isRunning = true;
         }
 
+        await documentGenerator.InitializeAsync();
+
         _dangerRatio = 0;
         _scoreResult = new ScoreResult();
         _currentDay = 1;
+        StartDay();
 
         _gameLoopCancelation = new CancellationTokenSource();
 
         using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(_millisecondsPerFrame));
         var stopwatch = Stopwatch.StartNew();
-        long lastTick = stopwatch.ElapsedMilliseconds;
+        double lastTick = stopwatch.ElapsedMilliseconds;
 
         OnGameStarted();
 
         while (await timer.WaitForNextTickAsync(_gameLoopCancelation.Token))
         {
-            long currentTick = stopwatch.ElapsedMilliseconds;
-            float deltaTime = (currentTick - lastTick) / 1000f;
+            double currentTick = stopwatch.ElapsedMilliseconds;
+            double deltaTime = (currentTick - lastTick) / 1000D;
             lastTick = currentTick;
 
             Update(deltaTime);
@@ -108,7 +111,7 @@ public class GameEngine(
         }
     }
 
-    private void Update(float deltaTime)
+    private void Update(double deltaTime)
     {
         _isProcessing = true;
         _currentRoundTime += deltaTime;

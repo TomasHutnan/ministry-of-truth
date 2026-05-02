@@ -101,10 +101,10 @@ public class ComplexityCalculator
         }
 
         // Normalize
-        int avgWordLen = totalWordChars / totalWords;
-        int avgSentenceLen = totalWords / totalSentences;
-        int punctDensity = punctCount / totalWords;
-        int numDensity = (nonAlphaGroupCount + capitalizedWordCount) / totalWords;
+        int avgWordLen = totalWords == 0 ? 0 : totalWordChars / totalWords;
+        int avgSentenceLen = totalSentences == 0 ? 0 : totalWords / totalSentences;
+        int punctDensity = totalWords == 0 ? 0 : punctCount / totalWords;
+        int numDensity = totalWords == 0 ? 0 : (nonAlphaGroupCount + capitalizedWordCount) / totalWords;
         int wordCount = totalWords;
 
         // Clamp

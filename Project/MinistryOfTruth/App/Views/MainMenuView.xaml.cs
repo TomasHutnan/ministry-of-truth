@@ -19,7 +19,7 @@ public partial class MainMenuView : ContentView
 
     private async void OnLoaded(object? sender, EventArgs e)
     {
-        await _viewModel.StartMenuTickerAsync();
+        await _viewModel.InitializeAsync();
     }
 
     private void OnUnloaded(object? sender, EventArgs e)

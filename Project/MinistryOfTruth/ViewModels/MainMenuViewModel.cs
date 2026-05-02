@@ -11,6 +11,8 @@ public partial class MainMenuViewModel : ViewModelBase
 {
     private ITextTicker _ticker;
     private IPopupService _popupService;
+    private ITextSetLoader _textSetLoader;
+    private ITextRepository _textRepository;
 
     [ObservableProperty]
     public partial string MenuTickerText { get; set; } = string.Empty;
@@ -18,17 +20,24 @@ public partial class MainMenuViewModel : ViewModelBase
     [ObservableProperty]
     public partial int HighScore { get; set; }
 
+    [ObservableProperty]
+    public partial bool IsLoading { get; set; } = false;
+
     public MainMenuViewModel(
         INavigationService navigationService,
         IGameEngine gameEngine,
         ITextTicker ticker,
         IHighScoreStore highScoreStore,
-        IPopupService popupService) : base(navigationService, gameEngine)
+        IPopupService popupService,
+        ITextSetLoader textSetLoader,
+        ITextRepository textRepository) : base(navigationService, gameEngine)
     {
         _ticker = ticker;
         _ticker.TextUpdated += TickerTextUpdated;
 
         _popupService = popupService;
+        _textSetLoader = textSetLoader;
+        _textRepository = textRepository;
 
         Task.Run(() => HighScore = highScoreStore.LoadAsync().Result);
     }
@@ -46,7 +55,29 @@ public partial class MainMenuViewModel : ViewModelBase
         string? textSetPath = await _popupService.ShowInputAsync("Input the path to your text set archive.");
         if (textSetPath != null)
         {
-            Debug.WriteLine($"Loading not yet implemented. Received path: {textSetPath}");
+            try
+            {
+                IsLoading = true;
+                await _textSetLoader.LoadFromFileAsync(textSetPath);
+                await _popupService.ShowConfirmationAsync("Text set loaded successfully!");
+            }
+            catch (FileNotFoundException)
+            {
+                await _popupService.ShowConfirmationAsync("Error: File not found at the specified path.");
+            }
+            catch (InvalidOperationException ex)
+            {
+                await _popupService.ShowConfirmationAsync($"Error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Unexpected error loading text set: {ex}");
+                await _popupService.ShowConfirmationAsync("Error: Failed to load text set. Check the archive format.");
+            }
+            finally
+            {
+                IsLoading = false;
+            }
         }
     }
 
@@ -56,13 +87,53 @@ public partial class MainMenuViewModel : ViewModelBase
         bool confirmed = await _popupService.ShowConfirmationAsync("Are you sure? This action will overwrite the currently loaded text set!");
         if (confirmed)
         {
-            Debug.WriteLine("Reset to defaults not yet implemented.");
+            try
+            {
+                IsLoading = true;
+                await _textSetLoader.ResetToDefaultAsync();
+                await _popupService.ShowConfirmationAsync("Text set reset to defaults successfully!");
+            }
+            catch (InvalidOperationException ex)
+            {
+                await _popupService.ShowConfirmationAsync($"Error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Unexpected error resetting text set: {ex}");
+                await _popupService.ShowConfirmationAsync("Error: Failed to reset text set.");
+            }
+            finally
+            {
+                IsLoading = false;
+            }
         }
     }
 
     public async Task StartMenuTickerAsync()
     {
         await _ticker.StartTickerAsync();
+    }
+
+    public async Task InitializeAsync()
+    {
+        await StartMenuTickerAsync();
+        
+        if (!_textRepository.RepositoryExists())
+        {
+            try
+            {
+                IsLoading = true;
+                await _textSetLoader.LoadDefaultAsync();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"Error loading default text set: {e.Message}");
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
     }
 
     public void StopMenuTicker()
