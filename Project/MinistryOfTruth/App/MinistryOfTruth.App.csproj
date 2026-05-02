@@ -87,6 +87,12 @@
 	  <MauiXaml Update="Views\MainMenuView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\Popups\ConfirmPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Popups\InputPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\ResultsView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
