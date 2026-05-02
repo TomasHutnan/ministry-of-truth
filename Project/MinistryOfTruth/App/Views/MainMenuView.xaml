@@ -12,37 +12,37 @@
             <converters:WidthToFontSizeConverter x:Key="WidthToFontSizeConverter" MinFontSize="12" MaxFontSize="112" />
         </ResourceDictionary>
     </ContentView.Resources>
-    <VerticalStackLayout Padding="{Binding Source={x:Reference Root}, Path=Width, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.03}">
+    <VerticalStackLayout Padding="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.03}">
         <Label
             Text="Ministry of Truth"
             FontFamily="Titles"
             CharacterSpacing="0.1"
-            FontSize="{Binding Source={x:Reference Root}, Path=Width, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.06}"
+            FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.06}"
             TextColor="{StaticResource TextOldPaper}"
             VerticalOptions="Center"
             HorizontalOptions="Start" />
         <Grid ColumnDefinitions="*,*" ColumnSpacing="50" Margin="0, 50, 0, 0">
-            <VerticalStackLayout Spacing="{Binding Source={x:Reference Root}, Path=Height, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.015}" Grid.Column="0">
+            <VerticalStackLayout Spacing="{Binding Source={x:Reference Root}, Path=Height, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.015}" Grid.Column="0">
                 <Button
                     Text="Play"
                     Style="{StaticResource MinistryButton}"
-                    FontSize="{Binding Source={x:Reference Root}, Path=Width, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"
+                    FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"
                     HorizontalOptions="Start"/>
                 <Button
                     Text="Load Text Set"
                     Style="{StaticResource MinistryButton}"
-                    FontSize="{Binding Source={x:Reference Root}, Path=Width, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"
+                    FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"
                     HorizontalOptions="Start"/>
                 <Button
                     Text="Reset to Defaults"
                     Style="{StaticResource MinistryButton}"
-                    FontSize="{Binding Source={x:Reference Root}, Path=Width, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"
+                    FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"
                     HorizontalOptions="Start"/>
                 <Button
                     Margin="0, 30, 0, 0"
                     Text="Quit"
                     Style="{StaticResource MinistryButton}"
-                    FontSize="{Binding Source={x:Reference Root}, Path=Width, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"
+                    FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"
                     HorizontalOptions="Start"/>
 
                 <VerticalStackLayout Margin="0, 75, 0, 0">
@@ -50,19 +50,19 @@
                         Text="High-Score"
                         FontFamily="Labels"
                         TextColor="{StaticResource TextDimmed}"
-                        FontSize="{Binding Source={x:Reference Root}, Path=Width, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.015}"/>
+                        FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.015}"/>
                     <Label
                         Text="23789"
                         FontFamily="Labels"
                         TextColor="{StaticResource MinistryMutedGold}"
-                        FontSize="{Binding Source={x:Reference Root}, Path=Width, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"/>
+                        FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"/>
                 </VerticalStackLayout>
             </VerticalStackLayout>
             <Label Grid.Column="1"
                    Text="{Binding MenuTickerText}"
                    TextColor="{StaticResource TextDimmed}"
                    FontFamily="Typewriter"
-                   FontSize="{Binding Source={x:Reference Root}, Path=Width, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.03}"/>
+                   FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.03}"/>
         </Grid>
     </VerticalStackLayout>
 </ContentView>
