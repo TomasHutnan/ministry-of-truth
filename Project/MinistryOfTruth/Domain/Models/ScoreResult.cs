@@ -1,11 +1,12 @@
 ﻿namespace MinistryOfTruth.Domain.Models;
 
 public record class ScoreResult(
-    int Days,
-    int CorrectApprovals,
-    int CorrectCensors,
-    int IncorrectApprovals,
-    int IncorrectCensors)
+    int Days = 0,
+    int CorrectApprovals = 0,
+    int CorrectCensors = 0,
+    int IncorrectApprovals = 0,
+    int IncorrectCensors = 0,
+    int Missed = 0)
 {
     public int TextsProcessed =>
         CorrectApprovals + CorrectCensors
@@ -15,5 +16,6 @@ public record class ScoreResult(
         (CorrectApprovals * 10)
       + (CorrectCensors * 10)
       - (IncorrectApprovals * 15)
-      - (IncorrectCensors * 10);
+      - (IncorrectCensors * 10)
+      - (Missed * 12);
 }

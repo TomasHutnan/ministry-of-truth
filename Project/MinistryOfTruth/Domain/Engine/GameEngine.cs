@@ -1,98 +1,223 @@
 ﻿using MinistryOfTruth.Domain.Interfaces;
 using MinistryOfTruth.Domain.Models;
+using MinistryOfTruth.Domain.Enums;
+using System.Diagnostics;
 
 namespace MinistryOfTruth.Domain.Engine;
 
 public class GameEngine(
     IHighScoreStore highScoreStore,
-    IRuleRepository ruleRepository,
-    ITextRepository textRepository,
-    IViolationRepository violationRepository,
-    ComplexityCalculator complexityCalculator) : IGameEngine
+    IDocumentGenerator documentGenerator) : IGameEngine
 {
+    private const double _millisecondsPerFrame = 1000D / 60D;
+    private const double _passiveDangerGrowth = 1D / (120 * 1000);  // Fills up the whole meter in two minutes
+
+    private const double _incorrectApproveDangerGrowthRatio = 1.05D;
+    private const double _incorrectCensorDangerGrowthRatio = 1.1D;
+
+    private const double _dayOneRoundTime = 1000D * 60;
+    private const double _absoluteDailyRoundTimeDecrese = 1000D * 5;
+    private const double _minimalRoundTime = 1000D * 20;
+
     private IHighScoreStore _highScoreStore = highScoreStore;
-    private IRuleRepository _ruleRepository = ruleRepository;
-    private ITextRepository _textRepository = textRepository;
-    private IViolationRepository _violationRepository = violationRepository;
+    private IDocumentGenerator _documentGenerator = documentGenerator;
 
-    private ComplexityCalculator _complexityCalculator = complexityCalculator;
-
-    private int _highScore = 0;
-    private Dictionary<string, Rule> _ruleById = [];
-    private Dictionary<string, TextEntry> _textById = [];
-    private Dictionary<(string, string), Violation> _violationByTextRuleIds = [];
-
-    private Dictionary<int, List<TextEntry>> _textsByComplexity = [];
-
-    private bool _isInitialized = false;
+    private static readonly object locker = new object();
     private bool _isRunning = false;
-    public async Task InitializeAsync()
+    private CancellationTokenSource? _gameLoopCancelation;
+
+    private double _totalRoundTime;
+    private double _currentRoundTime;
+
+    private double _dangerRatio;
+
+    private ScoreResult _scoreResult = new ScoreResult();
+    private DayPackage? _dayPackage;
+    private int _currentDay;
+
+    private TextEntry? _currentText;
+    private LastAction? _lastAction;
+
+    private bool _isProcessing = false;
+
+    public event EventHandler<EventArgs>? GameStarted;
+    public event EventHandler<ScoreResult>? GameEnded;
+    public event EventHandler<GameState>? GameStateChanged;
+
+    protected virtual void OnGameStarted()
     {
-        _isInitialized = false;
-
-        // IO
-        var ruleTask = _ruleRepository.LoadAllAsync();
-        var textTask = _textRepository.LoadAllAsync();
-        var violationTask = _violationRepository.LoadAllAsync();
-        var highScoreTask = _highScoreStore.LoadAsync();
-
-        await Task.WhenAll([ruleTask, textTask, violationTask, highScoreTask]);
-
-        // Compute
-        int highscore = highScoreTask.Result;
-        Dictionary<string, Rule> ruleById = ruleTask.Result.ToDictionary((rule) => rule.Id);
-        Dictionary<string, TextEntry> textById = textTask.Result.ToDictionary((text) => text.Id);
-
-        Dictionary<(string, string), Violation> violationByTextRuleIds = new();
-        foreach (Violation violation in violationTask.Result)
-        {
-            if (!textById.ContainsKey(violation.TextId))
-            {
-                throw new InvalidDataException($"Violations foreign key TextId with value {violation.TextId} not found in parent collection Texts.");
-            }
-            if (!ruleById.ContainsKey(violation.RuleId))
-            {
-                throw new InvalidDataException($"Violations foreign key RuleId with value {violation.RuleId} not found in parent collection Rules.");
-            }
-
-            violationByTextRuleIds[(violation.TextId, violation.RuleId)] = violation;
-        }
-
-        Dictionary<int, List<TextEntry>> textsByComplexity = new();
-        foreach (var text in textById.Values)
-        {
-            int tier = _complexityCalculator.CalculateGroup(text.Content);
-
-            if (!textsByComplexity.TryGetValue(tier, out var list))
-            {
-                list = new List<TextEntry>();
-                textsByComplexity[tier] = list;
-            }
-
-            list.Add(text);
-        }
-
-        // Commit
-        _highScore = highscore;
-        _ruleById = ruleById;
-        _textById = textById;
-        _violationByTextRuleIds = violationByTextRuleIds;
-        _textsByComplexity = textsByComplexity;
-
-        _isInitialized = true;
+        GameStarted?.Invoke(this, new EventArgs());
     }
 
-    public void StartGame()
+    protected virtual void OnGameEnded(ScoreResult result)
     {
-        if (!_isInitialized)
+        GameEnded?.Invoke(this, result);
+    }
+
+    protected virtual void OnGameStateChanged(GameState newGameState)
+    {
+        GameStateChanged?.Invoke(this, newGameState);
+    }
+
+    public async Task StartGameLoop()
+    {
+        lock (locker)
         {
-            throw new InvalidOperationException("Invalid state to start a game. GameEngine must first be initialized.");
-        }
-        if (_isRunning)
-        {
-            throw new InvalidOperationException("Game is already running.");
+            if (_isRunning)
+            {
+                throw new InvalidOperationException("Game is already running.");
+            }
+            _isRunning = true;
         }
 
-        _isRunning = true;
+        _dangerRatio = 0;
+        _scoreResult = new ScoreResult();
+        _currentDay = 1;
+
+        _gameLoopCancelation = new CancellationTokenSource();
+
+        using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(_millisecondsPerFrame));
+        var stopwatch = Stopwatch.StartNew();
+        long lastTick = stopwatch.ElapsedMilliseconds;
+
+        OnGameStarted();
+
+        while (await timer.WaitForNextTickAsync(_gameLoopCancelation.Token))
+        {
+            long currentTick = stopwatch.ElapsedMilliseconds;
+            float deltaTime = (currentTick - lastTick) / 1000f;
+            lastTick = currentTick;
+
+            Update(deltaTime);
+        }
+    }
+
+    public void Approve()
+    {
+        if (!_isProcessing)
+        {
+            _lastAction = LastAction.Approve;
+        }
+    }
+
+    public void Censor()
+    {
+        if (!_isProcessing)
+        {
+            _lastAction = LastAction.Censor;
+        }
+    }
+
+    private void Update(float deltaTime)
+    {
+        _isProcessing = true;
+        _currentRoundTime += deltaTime;
+        _dangerRatio += deltaTime * _passiveDangerGrowth;
+
+        ResolveLastAction();
+
+        if (_currentRoundTime >= _totalRoundTime)
+        {
+            FailRemainingTexts();
+        }
+
+        if (_dangerRatio >= 1)
+        {
+            EndGame();
+        }
+        else if (_currentRoundTime >= _totalRoundTime)
+        {
+            EndDay();
+            StartDay();
+        }
+
+        PublishState();
+        _isProcessing = false;
+    }
+
+    private void ResolveLastAction()
+    {
+        if (_lastAction == null)
+        {
+            return;
+        }
+
+        if (_lastAction == LastAction.Approve)
+        {
+            if (!_dayPackage!.ViolationIds.Contains(_currentText!.Id))
+            {
+                _scoreResult = _scoreResult with { CorrectApprovals = _scoreResult.CorrectApprovals + 1 };
+            }
+            else
+            {
+                _dangerRatio *= _incorrectApproveDangerGrowthRatio;
+                _scoreResult = _scoreResult with { IncorrectApprovals = _scoreResult.IncorrectApprovals + 1 };
+            }
+        }
+        else
+        {
+            if (_dayPackage!.ViolationIds.Contains(_currentText!.Id))
+            {
+                _scoreResult = _scoreResult with { CorrectCensors = _scoreResult.CorrectCensors + 1 };
+            }
+            else
+            {
+                _dangerRatio *= _incorrectCensorDangerGrowthRatio;
+                _scoreResult = _scoreResult with { IncorrectCensors = _scoreResult.IncorrectCensors + 1 };
+            }
+        }
+
+        _lastAction = null;
+        NextText();
+    }
+
+    private void StartDay()
+    {
+        _totalRoundTime = Math.Max(_dayOneRoundTime - (_currentDay - 1) * _absoluteDailyRoundTimeDecrese, _minimalRoundTime);
+        _dayPackage = _documentGenerator.CreateDayPackage(_currentDay, 3);
+
+        NextText();
+    }
+
+    private void NextText()
+    {
+        _currentText = _dayPackage!.DocumentStack.Dequeue();
+    }
+
+    private void EndDay()
+    {
+        _currentDay++;
+    }
+
+    private void FailRemainingTexts()
+    {
+        _scoreResult = _scoreResult with { Missed = _scoreResult.Missed + _dayPackage!.DocumentStack.Count };
+        _dayPackage.DocumentStack.Clear();
+    }
+
+    private void EndGame()
+    {
+        if (_gameLoopCancelation != null)
+        {
+            _gameLoopCancelation!.Cancel();
+            _isRunning = false;
+
+            Task.Run(() => _highScoreStore.SaveIfGreaterAsync(_scoreResult.Score));
+            OnGameEnded(_scoreResult);
+        }
+    }
+
+    private void PublishState()
+    {
+        OnGameStateChanged(new GameState(
+            _currentText!.Content,
+            _dayPackage!.RuleDescription,
+            _currentDay,
+            _scoreResult.Score,
+            _dayPackage!.DocumentStack.Count + 1,
+            _currentRoundTime / _totalRoundTime,
+            _dangerRatio,
+            true,
+            ""));
     }
 }

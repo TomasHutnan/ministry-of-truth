@@ -35,4 +35,13 @@ public class FileHighScoreStore : IHighScoreStore
 
         await File.WriteAllTextAsync(_highScorePath, score.ToString(CultureInfo.InvariantCulture));
     }
+
+    public async Task SaveIfGreaterAsync(int score)
+    {
+        int currentScore = await LoadAsync();
+        if (score > currentScore)
+        {
+            await SaveAsync(score);
+        }
+    }
 }

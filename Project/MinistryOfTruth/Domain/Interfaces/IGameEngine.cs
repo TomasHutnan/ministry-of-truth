@@ -1,7 +1,12 @@
-﻿namespace MinistryOfTruth.Domain.Interfaces;
+﻿using MinistryOfTruth.Domain.Models;
+
+namespace MinistryOfTruth.Domain.Interfaces;
 
 public interface IGameEngine
 {
-    public Task InitializeAsync();
-    public void StartGame();
+    public event EventHandler<EventArgs>? GameStarted;
+    public event EventHandler<ScoreResult>? GameEnded;
+    public event EventHandler<GameState>? GameStateChanged;
+
+    public Task StartGameLoop();
 }
