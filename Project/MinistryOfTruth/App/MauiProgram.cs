@@ -6,6 +6,7 @@ using MinistryOfTruth.Data.Files;
 using MinistryOfTruth.ViewModels;
 using MinistryOfTruth.Data.Csv;
 using MinistryOfTruth.Domain.Presentation;
+using CommunityToolkit.Maui;
 
 namespace App
 {
@@ -16,6 +17,7 @@ namespace App
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("Anton-Regular.ttf", "Titles");
