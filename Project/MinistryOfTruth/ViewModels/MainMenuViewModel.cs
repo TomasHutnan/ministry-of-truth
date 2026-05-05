@@ -59,20 +59,20 @@ public partial class MainMenuViewModel : ViewModelBase
             {
                 IsLoading = true;
                 await _textSetLoader.LoadFromFileAsync(textSetPath);
-                await _popupService.ShowConfirmationAsync("Text set loaded successfully!");
+                await _popupService.ShowNoticeAsync("Text set loaded successfully!");
             }
             catch (FileNotFoundException)
             {
-                await _popupService.ShowConfirmationAsync("Error: File not found at the specified path.");
+                await _popupService.ShowErrorAsync("Error: File not found at the specified path.");
             }
             catch (InvalidOperationException ex)
             {
-                await _popupService.ShowConfirmationAsync($"Error: {ex.Message}");
+                await _popupService.ShowErrorAsync($"Error: {ex.Message}");
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Unexpected error loading text set: {ex}");
-                await _popupService.ShowConfirmationAsync("Error: Failed to load text set. Check the archive format.");
+                await _popupService.ShowErrorAsync("Error: Failed to load text set. Check the archive format.");
             }
             finally
             {
@@ -91,16 +91,16 @@ public partial class MainMenuViewModel : ViewModelBase
             {
                 IsLoading = true;
                 await _textSetLoader.ResetToDefaultAsync();
-                await _popupService.ShowConfirmationAsync("Text set reset to defaults successfully!");
+                await _popupService.ShowNoticeAsync("Text set reset to defaults successfully!");
             }
             catch (InvalidOperationException ex)
             {
-                await _popupService.ShowConfirmationAsync($"Error: {ex.Message}");
+                await _popupService.ShowErrorAsync($"Error: {ex.Message}");
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Unexpected error resetting text set: {ex}");
-                await _popupService.ShowConfirmationAsync("Error: Failed to reset text set.");
+                await _popupService.ShowErrorAsync("Error: Failed to reset text set.");
             }
             finally
             {
