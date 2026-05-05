@@ -22,14 +22,14 @@
                 TextColor="{StaticResource ViolationRed}"
                 HorizontalOptions="Center"
                 HorizontalTextAlignment="Center"
-                Text="Any mention of [keyword] is forbidden."/>
+                Text="{Binding GameState.Rule}"/>
             <Label Grid.Column="2"
                 FontFamily="Labels"
                 FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"
                 TextColor="{StaticResource TextDimmed}"
                 HorizontalOptions="Center"
                 VerticalOptions="Center"
-                Text="Day [13]"/>
+                Text="{Binding DayLabelText}"/>
         </Grid>
         <Grid Grid.Row="1" ColumnDefinitions="20*,60*,20*">
             <Label Grid.Column="1"
@@ -39,17 +39,19 @@
             HorizontalOptions="Center"
             VerticalOptions="Center"
             HorizontalTextAlignment="Justify"
-            Text="[The Ministry reminds all departments that reporting procedures remain unchanged for the upcoming quarter.]"/>
+            Text="{Binding GameState.Text}"/>
         </Grid>
         <Grid Grid.Row="2" ColumnDefinitions="45*,10*,45*">
             <Button Grid.Column="0"
                 Text="Accept"
+                Command="{Binding ApproveCommand}"
                 TextColor="{StaticResource MinistryGreen}"
                 Style="{StaticResource MinistryButton}"
                 FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.04}"
                 HorizontalOptions="End"/>
             <Button Grid.Column="2"
                 Text="Censor"
+                Command="{Binding CensorCommand}"
                 TextColor="{StaticResource ViolationRed}"
                 Style="{StaticResource MinistryButton}"
                 FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.04}"
@@ -63,7 +65,7 @@
                 HorizontalOptions="Start"
                 VerticalOptions="End"
                 Padding="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.02}"
-                Text="[7] texts remaining"/>
+                Text="{Binding TextsRemainingLabelText}"/>
             <Rectangle Grid.Column="1"
                 BackgroundColor="{StaticResource ViolationRed}"
                 HorizontalOptions="End"/>

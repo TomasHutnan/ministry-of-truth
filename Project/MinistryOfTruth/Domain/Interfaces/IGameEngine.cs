@@ -9,4 +9,7 @@ public interface IGameEngine
     public event EventHandler<GameState>? GameStateChanged;
 
     public Task StartGameLoop();
+
+    public void Approve();
+    public void Censor();
 }

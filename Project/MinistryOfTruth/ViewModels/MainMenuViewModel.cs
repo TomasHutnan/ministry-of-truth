@@ -46,7 +46,6 @@ public partial class MainMenuViewModel : ViewModelBase
     public async Task Play()
     {
         await _navigationService.GoToGameAsync();
-        await _gameEngine.StartGameLoop();
     }
 
     [RelayCommand]

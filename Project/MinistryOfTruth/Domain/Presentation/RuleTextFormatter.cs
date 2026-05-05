@@ -9,4 +9,9 @@ public class RuleTextFormatter
         // TODO: Add more variants - maybe introduce levels of agrresivity
         return $"Any mention of {rule.Keyword} is prohibited.";
     }
+    public string BuildRuleText(string keyword)
+    {
+        // TODO: Add more variants - maybe introduce levels of agrresivity
+        return $"Any mention of {keyword} is prohibited.";
+    }
 }
