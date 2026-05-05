@@ -2,12 +2,71 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:MinistryOfTruth.ViewModels;assembly=MinistryOfTruth.ViewModels"
+             xmlns:converters="clr-namespace:App.Converters"
              x:Class="App.Views.GameView"
-             x:DataType="vm:GameViewModel">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to the Game View!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             x:DataType="vm:GameViewModel"
+             x:Name="Root"
+             BackgroundColor="{StaticResource BkgAbyss}">
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <converters:WidthToFontSizeConverter x:Key="WidthToFontSizeConverter" MinFontSize="12" MaxFontSize="112" />
+        </ResourceDictionary>
+    </ContentView.Resources>
+    <Grid RowDefinitions="20*, 50*, 20*,10*">
+        <Grid Grid.Row="0" ColumnDefinitions="20*, 60*, 20*">
+            <Rectangle Grid.Column="0"
+                BackgroundColor="{StaticResource ViolationRed}"/>
+            <Label Grid.Column="1"
+                FontFamily="Labels"
+                FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.03}"
+                TextColor="{StaticResource ViolationRed}"
+                HorizontalOptions="Center"
+                HorizontalTextAlignment="Center"
+                Text="Any mention of [keyword] is forbidden."/>
+            <Label Grid.Column="2"
+                FontFamily="Labels"
+                FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"
+                TextColor="{StaticResource TextDimmed}"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                Text="Day [13]"/>
+        </Grid>
+        <Grid Grid.Row="1" ColumnDefinitions="20*,60*,20*">
+            <Label Grid.Column="1"
+            FontFamily="Typewriter"
+            FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.03}"
+            TextColor="{StaticResource TextOldPaper}"
+            HorizontalOptions="Center"
+            VerticalOptions="Center"
+            HorizontalTextAlignment="Justify"
+            Text="[The Ministry reminds all departments that reporting procedures remain unchanged for the upcoming quarter.]"/>
+        </Grid>
+        <Grid Grid.Row="2" ColumnDefinitions="45*,10*,45*">
+            <Button Grid.Column="0"
+                Text="Accept"
+                TextColor="{StaticResource MinistryGreen}"
+                Style="{StaticResource MinistryButton}"
+                FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.04}"
+                HorizontalOptions="End"/>
+            <Button Grid.Column="2"
+                Text="Censor"
+                TextColor="{StaticResource ViolationRed}"
+                Style="{StaticResource MinistryButton}"
+                FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.04}"
+                HorizontalOptions="Start"/>
+        </Grid>
+        <Grid Grid.Row="3" ColumnDefinitions="50*,50*">
+            <Label Grid.Column="0"
+                FontFamily="Labels"
+                FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.02}"
+                TextColor="{StaticResource TextDimmed}"
+                HorizontalOptions="Start"
+                VerticalOptions="End"
+                Padding="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.02}"
+                Text="[7] texts remaining"/>
+            <Rectangle Grid.Column="1"
+                BackgroundColor="{StaticResource ViolationRed}"
+                HorizontalOptions="End"/>
+        </Grid>
+    </Grid>
 </ContentView>
