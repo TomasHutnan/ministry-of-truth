@@ -29,6 +29,7 @@ public class GameEngine(IDocumentGenerator documentGenerator) : IGameEngine
 
     private TextEntry? _currentText;
     private LastAction? _lastAction;
+    private bool? _lastDecisionWasCorrect;
 
     private bool _isProcessing = false;
 
@@ -123,6 +124,7 @@ public class GameEngine(IDocumentGenerator documentGenerator) : IGameEngine
     {
         if (_lastAction == null)
         {
+            _lastDecisionWasCorrect = null;
             return;
         }
 
@@ -131,11 +133,13 @@ public class GameEngine(IDocumentGenerator documentGenerator) : IGameEngine
             if (!_dayPackage!.ViolationIds.Contains(_currentText!.Id))
             {
                 _scoreResult = _scoreResult with { CorrectApprovals = _scoreResult.CorrectApprovals + 1 };
+                _lastDecisionWasCorrect = true;
             }
             else
             {
                 _dangerRatio = _dangerRatio * _incorrectApproveDangerGrowthRatio + _incorrectApproveDangerGrowth;
                 _scoreResult = _scoreResult with { IncorrectApprovals = _scoreResult.IncorrectApprovals + 1 };
+                _lastDecisionWasCorrect = false;
             }
         }
         else
@@ -143,11 +147,13 @@ public class GameEngine(IDocumentGenerator documentGenerator) : IGameEngine
             if (_dayPackage!.ViolationIds.Contains(_currentText!.Id))
             {
                 _scoreResult = _scoreResult with { CorrectCensors = _scoreResult.CorrectCensors + 1 };
+                _lastDecisionWasCorrect = true;
             }
             else
             {
                 _dangerRatio = _dangerRatio * _incorrectCensorDangerGrowthRatio + _incorrectCensorDangerGrowth;
                 _scoreResult = _scoreResult with { IncorrectCensors = _scoreResult.IncorrectCensors + 1 };
+                _lastDecisionWasCorrect = false;
             }
         }
 
@@ -180,12 +186,6 @@ public class GameEngine(IDocumentGenerator documentGenerator) : IGameEngine
         _currentDay++;
     }
 
-    private void FailRemainingTexts()
-    {
-        _scoreResult = _scoreResult with { Missed = _scoreResult.Missed + _dayPackage!.DocumentStack.Count };
-        _dayPackage.DocumentStack.Clear();
-    }
-
     private void EndGame()
     {
         if (_gameLoopCancelation != null)
@@ -206,7 +206,7 @@ public class GameEngine(IDocumentGenerator documentGenerator) : IGameEngine
             _scoreResult.Score,
             _dayPackage!.DocumentStack.Count + 1,
             _dangerRatio,
-            true,
+            _lastDecisionWasCorrect,
             ""));
     }
 }

@@ -7,6 +7,6 @@ public record GameState(
     int Score,
     int TextsRemaining,
     double DangerLevelRatio, // 0-1
-    bool IsCorrectDecision = true,
+    bool? IsCorrectDecision = null,
     string StatusMessage = ""
 );

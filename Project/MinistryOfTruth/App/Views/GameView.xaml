@@ -85,5 +85,11 @@
                 </Grid>
             </Grid>
         </Grid>
+
+        <Rectangle x:Name="IncorrectFlash"
+                   Grid.RowSpan="4"
+                   BackgroundColor="{StaticResource ViolationRed}"
+                   Opacity="0"
+                   InputTransparent="True" />
     </Grid>
 </ContentView>

@@ -4,8 +4,9 @@ using MinistryOfTruth.Domain.Interfaces;
 using MinistryOfTruth.Domain.Models;
 using MinistryOfTruth.Domain.Presentation;
 using MinistryOfTruth.ViewModels.Base;
+using Microsoft.Maui.ApplicationModel;
+using Microsoft.Maui.Graphics;
 using System.Diagnostics;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MinistryOfTruth.ViewModels;
 
@@ -18,7 +19,7 @@ public partial class GameViewModel: ViewModelBase
     private Color _green = Colors.Green;
 
     [ObservableProperty]
-    public partial GameState GameState { get; set; } = new GameState("", "", 0, 0, 0, 0);
+    public partial GameState GameState { get; set; } = new GameState("", "", 0, 0, 0, 0.0, true, "");
 
     [ObservableProperty]
     public partial string RuleLabelText { get; set; } = "";
@@ -34,6 +35,10 @@ public partial class GameViewModel: ViewModelBase
 
     [ObservableProperty]
     public partial string TextsRemainingLabelText { get; set; } = "";
+
+    // generated observable field
+    [ObservableProperty]
+    public partial bool FlashIncorrect { get; set; } = false;
 
     [ObservableProperty]
     public partial double FillBarWidth { get; set; } = 0;
@@ -116,10 +121,14 @@ public partial class GameViewModel: ViewModelBase
             string pluralS = newGameState.TextsRemaining == 1 ? "" : "s";
             TextsRemainingLabelText = $"{newGameState.TextsRemaining} text{pluralS} remaining";
         }
-        if (newGameState.IsCorrectDecision)
+        // flash red when the most recent decision was incorrect
+        if (newGameState.IsCorrectDecision == false)
         {
-            // TODO
+            // Ensure property set happens on main thread because view bindings and animations respond on UI thread
+            Debug.WriteLine("Flashing red.");
+            MainThread.BeginInvokeOnMainThread(() => FlashIncorrect = true);
         }
+
         if (GameState.StatusMessage != newGameState.StatusMessage)
         {
             // TODO
@@ -139,7 +148,7 @@ public partial class GameViewModel: ViewModelBase
         if (ratio < 0d) ratio = 0d;
         if (ratio > 1d) ratio = 1d;
 
-        double newWidth = available * ratio;
+        double newWidth = Math.Max(0, available) * ratio;
         FillBarWidth = newWidth;
     }
 
