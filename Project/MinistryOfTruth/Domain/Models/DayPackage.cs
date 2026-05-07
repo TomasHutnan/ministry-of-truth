@@ -1,7 +1,7 @@
 ﻿namespace MinistryOfTruth.Domain.Models;
 
 public record DayPackage(
-    string RuleDescription,
+    Rule Rule,
     Queue<TextEntry> DocumentStack,
     HashSet<string> ViolationIds
 );

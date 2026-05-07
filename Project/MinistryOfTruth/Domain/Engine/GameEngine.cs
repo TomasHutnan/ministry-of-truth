@@ -63,7 +63,7 @@ public class GameEngine(IDocumentGenerator documentGenerator) : IGameEngine
             _isRunning = true;
         }
 
-        await documentGenerator.InitializeAsync();
+        await _documentGenerator.InitializeAsync();
 
         _dangerRatio = 0;
         _scoreResult = new ScoreResult();
@@ -201,7 +201,7 @@ public class GameEngine(IDocumentGenerator documentGenerator) : IGameEngine
     {
         OnGameStateChanged(new GameState(
             _currentText!.Content,
-            _dayPackage!.RuleDescription,
+            _dayPackage!.Rule.Keyword,
             _currentDay,
             _scoreResult.Score,
             _dayPackage!.DocumentStack.Count + 1,
