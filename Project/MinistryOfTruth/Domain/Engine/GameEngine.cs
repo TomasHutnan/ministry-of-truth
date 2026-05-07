@@ -115,7 +115,7 @@ public class GameEngine(
     {
         _isProcessing = true;
         _currentRoundTime += deltaTime;
-        _dangerRatio += deltaTime * _passiveDangerGrowth;
+        _dangerRatio += deltaTime * _passiveDangerGrowth * 1000;
 
         ResolveLastAction();
 
@@ -171,7 +171,15 @@ public class GameEngine(
         }
 
         _lastAction = null;
-        NextText();
+        if (_dayPackage.DocumentStack.Count > 0)
+        {
+            NextText();
+        }
+        else
+        {
+            EndDay();
+            StartDay();
+        }
     }
 
     private void StartDay()

@@ -136,8 +136,7 @@ public class DocumentGenerator(
             }
         }
 
-        string ruleDescription = BuildRuleDescription(clampedTargetComplexity);
-        return new DayPackage(ruleDescription, new Queue<TextEntry>(chosenTexts), violationIds);
+        return new DayPackage("RULE TODO", new Queue<TextEntry>(chosenTexts), violationIds);
     }
 
     private void AddRandomUniqueTexts(List<TextEntry> chosenTexts, IEnumerable<TextEntry> source, int count)
@@ -155,25 +154,5 @@ public class DocumentGenerator(
             candidates.RemoveAt(index);
             count--;
         }
-    }
-
-    private string BuildRuleDescription(int targetComplexity)
-    {
-        var ruleKeywords = _ruleById.Values
-            .OrderBy(rule => rule.Keyword)
-            .Take(_ruleNamePreviewLength)
-            .Select(rule => rule.Keyword);
-
-        string complexityText = targetComplexity switch
-        {
-            1 => "very simple",
-            2 => "simple",
-            3 => "moderate",
-            4 => "complex",
-            5 => "very complex",
-            _ => "unknown"
-        };
-
-        return $"Today's texts are {complexityText}. Keep an eye on: {string.Join(", ", ruleKeywords)}.";
     }
 }

@@ -1,4 +1,5 @@
 ﻿using App.Views;
+using Microsoft.Maui.ApplicationModel;
 using MinistryOfTruth.Domain.Interfaces;
 
 namespace App
@@ -25,29 +26,20 @@ namespace App
 
         public Task GoToResultsAsync() => NavigateToRouteAsync(ResultsRoute);
 
-        private Task NavigateToRouteAsync(string route)
+        private async Task NavigateToRouteAsync(string route)
         {
             var rootPage = _serviceProvider.GetRequiredService<AppRootPage>();
 
-            switch (route)
+            ContentView view = route switch
             {
-                case StartRoute:
-                    Show(rootPage, _serviceProvider.GetRequiredService<StartView>());
-                    break;
-                case MainMenuRoute:
-                    Show(rootPage, _serviceProvider.GetRequiredService<MainMenuView>());
-                    break;
-                case GameRoute:
-                    Show(rootPage, _serviceProvider.GetRequiredService<GameView>());
-                    break;
-                case ResultsRoute:
-                    Show(rootPage, _serviceProvider.GetRequiredService<ResultsView>());
-                    break;
-                default:
-                    throw new InvalidOperationException($"Unknown route '{route}'.");
-            }
+                StartRoute => _serviceProvider.GetRequiredService<StartView>(),
+                MainMenuRoute => _serviceProvider.GetRequiredService<MainMenuView>(),
+                GameRoute => _serviceProvider.GetRequiredService<GameView>(),
+                ResultsRoute => _serviceProvider.GetRequiredService<ResultsView>(),
+                _ => throw new InvalidOperationException($"Unknown route '{route}'.")
+            };
 
-            return Task.CompletedTask;
+            await MainThread.InvokeOnMainThreadAsync(() => Show(rootPage, view));
         }
 
         private static void Show(AppRootPage rootPage, ContentView view)

@@ -46,11 +46,13 @@ public partial class GameViewModel: ViewModelBase
 
         Task.Run(_gameEngine.StartGameLoop);
         _engine.GameStateChanged += GameStateChanged;
+        _engine.GameEnded += GameEndend;
     }
 
     ~GameViewModel()
     {
         _engine.GameStateChanged -= GameStateChanged;
+        _engine.GameEnded -= GameEndend;
     }
 
     private void GameStateChanged(object? sender, GameState newGameState)
@@ -78,5 +80,10 @@ public partial class GameViewModel: ViewModelBase
         }
 
         GameState = newGameState;
+    }
+
+    private async void GameEndend(object? sender, ScoreResult scoreResult)
+    {
+        await _navigationService.GoToResultsAsync();
     }
 }

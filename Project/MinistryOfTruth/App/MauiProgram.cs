@@ -40,6 +40,7 @@ namespace App
             builder.Services.AddSingleton<ITextSetLoader, TextSetService>();
 
             builder.Services.AddSingleton<ComplexityCalculator>();
+            builder.Services.AddSingleton<RuleTextFormatter>();
 
             builder.Services.AddSingleton<IGameEngine, GameEngine>();
             builder.Services.AddSingleton<INavigationService, MauiNavigationService>();

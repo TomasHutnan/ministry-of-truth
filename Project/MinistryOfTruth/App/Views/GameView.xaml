@@ -22,7 +22,7 @@
                 TextColor="{StaticResource ViolationRed}"
                 HorizontalOptions="Center"
                 HorizontalTextAlignment="Center"
-                Text="{Binding GameState.Rule}"/>
+                Text="{Binding RuleLabelText}"/>
             <Label Grid.Column="2"
                 FontFamily="Labels"
                 FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"

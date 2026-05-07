@@ -7,6 +7,8 @@
     <VerticalStackLayout>
         <Label 
             Text="Welcome to the Results View!"
+            FontFamily="Titles"
+            FontSize="100"
             VerticalOptions="Center" 
             HorizontalOptions="Center" />
     </VerticalStackLayout>
