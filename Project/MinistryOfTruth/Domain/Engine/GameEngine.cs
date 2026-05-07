@@ -10,8 +10,10 @@ public class GameEngine(IDocumentGenerator documentGenerator) : IGameEngine
     private const double _millisecondsPerFrame = 1000D / 60D;
     private const double _passiveDangerGrowth = 1D / (120 * 1000);  // Fills up the whole meter in two minutes
 
-    private const double _incorrectApproveDangerGrowthRatio = 1.05D;
-    private const double _incorrectCensorDangerGrowthRatio = 1.1D;
+    private const double _incorrectApproveDangerGrowth = 0.10D;
+    private const double _incorrectApproveDangerGrowthRatio = 1.10D;
+    private const double _incorrectCensorDangerGrowth = 0.15D;
+    private const double _incorrectCensorDangerGrowthRatio = 1.15D;
 
     private const double _dayOneRoundTime = 1000D * 60;
     private const double _absoluteDailyRoundTimeDecrese = 1000D * 5;
@@ -150,7 +152,7 @@ public class GameEngine(IDocumentGenerator documentGenerator) : IGameEngine
             }
             else
             {
-                _dangerRatio *= _incorrectApproveDangerGrowthRatio;
+                _dangerRatio = _dangerRatio * _incorrectApproveDangerGrowthRatio + _incorrectApproveDangerGrowth;
                 _scoreResult = _scoreResult with { IncorrectApprovals = _scoreResult.IncorrectApprovals + 1 };
             }
         }
@@ -162,7 +164,7 @@ public class GameEngine(IDocumentGenerator documentGenerator) : IGameEngine
             }
             else
             {
-                _dangerRatio *= _incorrectCensorDangerGrowthRatio;
+                _dangerRatio = _dangerRatio * _incorrectCensorDangerGrowthRatio + _incorrectCensorDangerGrowth;
                 _scoreResult = _scoreResult with { IncorrectCensors = _scoreResult.IncorrectCensors + 1 };
             }
         }
