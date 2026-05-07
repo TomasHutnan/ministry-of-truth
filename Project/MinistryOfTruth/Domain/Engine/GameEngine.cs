@@ -15,18 +15,11 @@ public class GameEngine(IDocumentGenerator documentGenerator) : IGameEngine
     private const double _incorrectCensorDangerGrowth = 0.15D;
     private const double _incorrectCensorDangerGrowthRatio = 1.15D;
 
-    private const double _dayOneRoundTime = 1000D * 60;
-    private const double _absoluteDailyRoundTimeDecrese = 1000D * 5;
-    private const double _minimalRoundTime = 1000D * 20;
-
     private IDocumentGenerator _documentGenerator = documentGenerator;
 
     private static readonly object locker = new object();
     private bool _isRunning = false;
     private CancellationTokenSource? _gameLoopCancelation;
-
-    private double _totalRoundTime;
-    private double _currentRoundTime;
 
     private double _dangerRatio;
 
@@ -113,24 +106,13 @@ public class GameEngine(IDocumentGenerator documentGenerator) : IGameEngine
     private void Update(double deltaTime)
     {
         _isProcessing = true;
-        _currentRoundTime += deltaTime;
         _dangerRatio += deltaTime * _passiveDangerGrowth * 1000;
 
         ResolveLastAction();
 
-        if (_currentRoundTime >= _totalRoundTime)
-        {
-            FailRemainingTexts();
-        }
-
         if (_dangerRatio >= 1)
         {
             EndGame();
-        }
-        else if (_currentRoundTime >= _totalRoundTime)
-        {
-            EndDay();
-            StartDay();
         }
 
         PublishState();
@@ -183,7 +165,6 @@ public class GameEngine(IDocumentGenerator documentGenerator) : IGameEngine
 
     private void StartDay()
     {
-        _totalRoundTime = Math.Max(_dayOneRoundTime - (_currentDay - 1) * _absoluteDailyRoundTimeDecrese, _minimalRoundTime);
         _dayPackage = _documentGenerator.CreateDayPackage(_currentDay, 3);
 
         NextText();
@@ -224,7 +205,6 @@ public class GameEngine(IDocumentGenerator documentGenerator) : IGameEngine
             _currentDay,
             _scoreResult.Score,
             _dayPackage!.DocumentStack.Count + 1,
-            _currentRoundTime / _totalRoundTime,
             _dangerRatio,
             true,
             ""));

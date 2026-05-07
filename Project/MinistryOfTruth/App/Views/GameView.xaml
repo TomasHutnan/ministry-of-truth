@@ -14,8 +14,13 @@
     </ContentView.Resources>
     <Grid RowDefinitions="20*, 50*, 20*,10*">
         <Grid Grid.Row="0" ColumnDefinitions="20*, 60*, 20*">
-            <Rectangle Grid.Column="0"
-                BackgroundColor="{StaticResource ViolationRed}"/>
+            <Label Grid.Column="0"
+                    FontFamily="Labels"
+                    FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"
+                    TextColor="{StaticResource TextDimmed}"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    Text="{Binding DayLabelText}" />
             <Label Grid.Column="1"
                 FontFamily="Labels"
                 FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.03}"
@@ -29,7 +34,7 @@
                 TextColor="{StaticResource TextDimmed}"
                 HorizontalOptions="Center"
                 VerticalOptions="Center"
-                Text="{Binding DayLabelText}"/>
+                Text="{Binding ScoreLabelText}"/>
         </Grid>
         <Grid Grid.Row="1" ColumnDefinitions="20*,60*,20*">
             <Label Grid.Column="1"
@@ -66,9 +71,17 @@
                 VerticalOptions="End"
                 Padding="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.02}"
                 Text="{Binding TextsRemainingLabelText}"/>
-            <Rectangle Grid.Column="1"
-                BackgroundColor="{StaticResource ViolationRed}"
-                HorizontalOptions="End"/>
+            <Grid Grid.Column="1" x:Name="FillContainer" Padding="20">
+                <Rectangle
+                    BackgroundColor="{StaticResource MinistryGreen}" />
+                <Grid>
+                    <Rectangle
+                        x:Name="FillBar"
+                        HorizontalOptions="End"
+                        BackgroundColor="{StaticResource ViolationRed}"
+                        WidthRequest="{Binding FillBarWidth}" />
+                </Grid>
+            </Grid>
         </Grid>
     </Grid>
 </ContentView>

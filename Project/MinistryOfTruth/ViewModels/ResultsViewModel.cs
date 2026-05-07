@@ -35,7 +35,7 @@ public partial class ResultsViewModel : ViewModelBase
                 NewHighScoreText = "NEW HIGH-SCORE";
             }
         });
-        Task.Delay(2000).ContinueWith((_) => IsContinueButtonEnabled = true);
+        Task.Delay(500).ContinueWith((_) => IsContinueButtonEnabled = true);
         SurvivedDaysText = $"{gameState.Day} DAYS";
         Score = scoreResult.Score;
     }

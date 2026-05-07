@@ -22,7 +22,7 @@
                 VerticalOptions="Center" 
                 HorizontalOptions="Center"/>
             <Label
-                Text="{Binding SurvivedDaysText}"
+                Text="{Binding SurvivedDaysText, FallbackValue=0 DAYS}"
                 FontFamily="Titles"
                 FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.06}"
                 TextColor="{StaticResource ViolationRed}"
@@ -31,14 +31,14 @@
         </VerticalStackLayout>
         <VerticalStackLayout Grid.Row="3" VerticalOptions="Center">
             <Label
-                Text="{Binding NewHighScoreText}"
+                Text="{Binding NewHighScoreText, FallbackValue=HIGHSCORE}"
                 FontFamily="Titles"
                 FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.03}"
                 TextColor="{StaticResource TextOldPaper}"
                 VerticalOptions="Center" 
                 HorizontalOptions="Center"/>
             <Label
-                Text="{Binding Score}"
+                Text="{Binding Score, FallbackValue=0}"
                 FontFamily="Titles"
                 FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.03}"
                 TextColor="{StaticResource MinistryGreen}"
@@ -50,7 +50,7 @@
             Command="{Binding ContinueCommand}"
             Style="{StaticResource MinistryButton}"
             FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.03}"
-            IsEnabled="{Binding IsContinueButtonEnabled}"
+            IsEnabled="{Binding IsContinueButtonEnabled, FallbackValue=true}"
             VerticalOptions="Center"
             HorizontalOptions="Center"/>
     </Grid>
