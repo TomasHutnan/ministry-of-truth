@@ -5,6 +5,7 @@ using MinistryOfTruth.Domain.Models;
 using MinistryOfTruth.Domain.Presentation;
 using MinistryOfTruth.ViewModels.Base;
 using System.Diagnostics;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MinistryOfTruth.ViewModels;
 
@@ -12,6 +13,9 @@ public partial class GameViewModel: ViewModelBase
 {
     private IGameEngine _engine;
     private RuleTextFormatter _ruleTextFormatter;
+
+    private Color _red = Colors.Red;
+    private Color _green = Colors.Green;
 
     [ObservableProperty]
     public partial GameState GameState { get; set; } = new GameState("", "", 0, 0, 0, 0);
@@ -24,6 +28,9 @@ public partial class GameViewModel: ViewModelBase
 
     [ObservableProperty]
     public partial string ScoreLabelText { get; set; } = "";
+
+    [ObservableProperty]
+    public partial Color ScoreLabelColor { get; set; } = Colors.Green;
 
     [ObservableProperty]
     public partial string TextsRemainingLabelText { get; set; } = "";
@@ -62,6 +69,18 @@ public partial class GameViewModel: ViewModelBase
         Task.Run(_gameEngine.StartGameLoop);
         _engine.GameStateChanged += GameStateChanged;
         _engine.GameEnded += GameEndend;
+
+        if (Application.Current != null)
+        {
+            if (Application.Current.Resources.TryGetValue("ViolationRed", out var colorvalue))
+            {
+                _red = (Color)colorvalue;
+            }
+            if (Application.Current.Resources.TryGetValue("MinistryGreen", out colorvalue))
+            {
+                _green = (Color)colorvalue;
+            }
+        }
     }
 
     ~GameViewModel()
@@ -80,10 +99,18 @@ public partial class GameViewModel: ViewModelBase
         {
             DayLabelText = $"Day {newGameState.Day}";
         }
-        if (GameState.Score != newGameState.Score)
+
+        if (GameState.Score < newGameState.Score)
         {
-            ScoreLabelText = $"{newGameState.Score} PTS";
+            ScoreLabelText = $"↑ {newGameState.Score} PTS";
+            ScoreLabelColor = _green;
         }
+        else if (GameState.Score > newGameState.Score)
+        {
+            ScoreLabelText = $"↓ {newGameState.Score} PTS";
+            ScoreLabelColor = _red;
+        }
+
         if (GameState.TextsRemaining != newGameState.TextsRemaining)
         {
             string pluralS = newGameState.TextsRemaining == 1 ? "" : "s";

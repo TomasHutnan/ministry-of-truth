@@ -31,7 +31,7 @@
             <Label Grid.Column="2"
                 FontFamily="Labels"
                 FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"
-                TextColor="{StaticResource TextDimmed}"
+                TextColor="{Binding ScoreLabelColor}"
                 HorizontalOptions="Center"
                 VerticalOptions="Center"
                 Text="{Binding ScoreLabelText}"/>
@@ -68,10 +68,12 @@
                 FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.02}"
                 TextColor="{StaticResource TextDimmed}"
                 HorizontalOptions="Start"
-                VerticalOptions="End"
-                Padding="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.02}"
+                VerticalOptions="Center"
+                Padding="20,0,0,0"
                 Text="{Binding TextsRemainingLabelText}"/>
-            <Grid Grid.Column="1" x:Name="FillContainer" Padding="20">
+            <Grid Grid.Column="1"
+                x:Name="FillContainer"
+                Padding="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.015}">
                 <Rectangle
                     BackgroundColor="{StaticResource MinistryGreen}" />
                 <Grid>
