@@ -1,8 +1,0 @@
-text_id,rule_id,justification
-T1,R1,Implicit reference to food shortages
-T3,R2,Mention of foreign alliance
-T4,R3,Alteration of historical record
-T6,R2,Explicit reference to allied nations
-T8,R1,Historical acknowledgment of shortages
-T8,R3,Contradicts official historical narrative
-T10,R3,Euphemistic historical revision

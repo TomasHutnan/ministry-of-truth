@@ -3,6 +3,7 @@ using MinistryOfTruth.Domain.Interfaces;
 using MinistryOfTruth.Domain.Models;
 using MinistryOfTruth.Data.Parsing;
 using CsvHelper;
+using CsvHelper.Configuration;
 using System.Globalization;
 
 namespace MinistryOfTruth.Data.Services;
@@ -104,9 +105,16 @@ public class TextSetService : ITextSetLoader
         }
         finally
         {
-            if (Directory.Exists(tempExtractDir))
+            try
             {
-                Directory.Delete(tempExtractDir, recursive: true);
+                if (Directory.Exists(tempExtractDir))
+                {
+                    Directory.Delete(tempExtractDir, recursive: true);
+                }
+            }
+            catch
+            {
+                // best-effort cleanup; ignore failures
             }
         }
     }
@@ -129,13 +137,29 @@ public class TextSetService : ITextSetLoader
         }
     }
 
+    private CsvConfiguration CreateCsvConfig()
+    {
+        return new CsvConfiguration(CultureInfo.InvariantCulture)
+        {
+            HasHeaderRecord = true,
+            Delimiter = ",",
+            Quote = '"',
+            Escape = '"',
+            BadDataFound = null,
+            MissingFieldFound = null,
+            HeaderValidated = null,
+            TrimOptions = TrimOptions.Trim, // trim outside quotes but preserve inner spaces
+        };
+    }
+
     private async Task<IEnumerable<TextEntry>> LoadTextsFromCsvAsync(string path)
     {
         return await Task.Run(() =>
         {
             using var stream = File.OpenRead(path);
             using var reader = new StreamReader(stream);
-            using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+            var config = CreateCsvConfig();
+            using var csv = new CsvReader(reader, config);
 
             var texts = new List<TextEntry>();
             foreach (var record in csv.GetRecords<CsvTextRow>())
@@ -152,7 +176,8 @@ public class TextSetService : ITextSetLoader
         {
             using var stream = File.OpenRead(path);
             using var reader = new StreamReader(stream);
-            using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+            var config = CreateCsvConfig();
+            using var csv = new CsvReader(reader, config);
 
             var rules = new List<Rule>();
             foreach (var record in csv.GetRecords<CsvRuleRow>())
@@ -169,7 +194,8 @@ public class TextSetService : ITextSetLoader
         {
             using var stream = File.OpenRead(path);
             using var reader = new StreamReader(stream);
-            using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+            var config = CreateCsvConfig();
+            using var csv = new CsvReader(reader, config);
 
             var violations = new List<Violation>();
             foreach (var record in csv.GetRecords<CsvViolationRow>())

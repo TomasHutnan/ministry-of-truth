@@ -1,4 +1,5 @@
 ﻿using CsvHelper;
+using CsvHelper.Configuration;
 using MinistryOfTruth.Data.Parsing;
 using MinistryOfTruth.Domain.Interfaces;
 using MinistryOfTruth.Domain.Models;
@@ -21,7 +22,18 @@ public class CsvRuleRepository : IRuleRepository
 
         using var stream = File.OpenRead(_rulesCsvPath);
         using var reader = new StreamReader(stream);
-        using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+
+        var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+        {
+            HasHeaderRecord = true,
+            Delimiter = ",",
+            Quote = '"',
+            Escape = '"',
+            BadDataFound = null,
+            TrimOptions = TrimOptions.None
+        };
+
+        using var csv = new CsvReader(reader, config);
 
         List<Rule> rules = new List<Rule>();
 
