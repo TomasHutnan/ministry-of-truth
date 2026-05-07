@@ -9,6 +9,7 @@ public class GameEngine(IDocumentGenerator documentGenerator) : IGameEngine
 {
     private const double _millisecondsPerFrame = 1000D / 60D;
     private const double _passiveDangerGrowth = 1D / (120 * 1000);  // Fills up the whole meter in two minutes
+    private const double _dailyDangerDecline = 0.2D;
 
     private const double _incorrectApproveDangerGrowth = 0.10D;
     private const double _incorrectApproveDangerGrowthRatio = 1.10D;
@@ -183,6 +184,7 @@ public class GameEngine(IDocumentGenerator documentGenerator) : IGameEngine
 
     private void EndDay()
     {
+        _dangerRatio = _dangerRatio > _dailyDangerDecline ? _dangerRatio - _dailyDangerDecline : 0;
         _currentDay++;
     }
 

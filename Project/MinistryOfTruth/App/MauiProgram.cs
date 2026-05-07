@@ -53,9 +53,6 @@ namespace App
             builder.Services.AddTransient<StartView>();
             builder.Services.AddTransient<StartViewModel>();
 
-            builder.Services.AddTransient<LoadingView>();
-            builder.Services.AddTransient<LoadingViewModel>();
-
             builder.Services.AddTransient<MainMenuView>();
             builder.Services.AddTransient<MainMenuViewModel>();
 
