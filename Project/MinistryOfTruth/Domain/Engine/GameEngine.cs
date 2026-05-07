@@ -5,9 +5,7 @@ using System.Diagnostics;
 
 namespace MinistryOfTruth.Domain.Engine;
 
-public class GameEngine(
-    IHighScoreStore highScoreStore,
-    IDocumentGenerator documentGenerator) : IGameEngine
+public class GameEngine(IDocumentGenerator documentGenerator) : IGameEngine
 {
     private const double _millisecondsPerFrame = 1000D / 60D;
     private const double _passiveDangerGrowth = 1D / (120 * 1000);  // Fills up the whole meter in two minutes
@@ -19,7 +17,6 @@ public class GameEngine(
     private const double _absoluteDailyRoundTimeDecrese = 1000D * 5;
     private const double _minimalRoundTime = 1000D * 20;
 
-    private IHighScoreStore _highScoreStore = highScoreStore;
     private IDocumentGenerator _documentGenerator = documentGenerator;
 
     private static readonly object locker = new object();
@@ -213,7 +210,6 @@ public class GameEngine(
             _gameLoopCancelation!.Cancel();
             _isRunning = false;
 
-            Task.Run(() => _highScoreStore.SaveIfGreaterAsync(_scoreResult.Score));
             OnGameEnded(_scoreResult);
         }
     }

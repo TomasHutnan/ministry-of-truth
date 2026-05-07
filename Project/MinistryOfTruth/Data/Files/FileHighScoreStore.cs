@@ -23,25 +23,25 @@ public class FileHighScoreStore : IHighScoreStore
             return 0;
         }
 
-        return score >= 0 ? score : 0;
+        return score;
     }
 
     public async Task SaveAsync(int score)
     {
-        ArgumentOutOfRangeException.ThrowIfLessThan(score, 0, nameof(score));
-
         string directory = Path.GetDirectoryName(_highScorePath)!;
         Directory.CreateDirectory(directory);
 
         await File.WriteAllTextAsync(_highScorePath, score.ToString(CultureInfo.InvariantCulture));
     }
 
-    public async Task SaveIfGreaterAsync(int score)
+    public async Task<bool> SaveIfGreaterAsync(int score)
     {
         int currentScore = await LoadAsync();
         if (score > currentScore)
         {
             await SaveAsync(score);
+            return true;
         }
+        return false;
     }
 }

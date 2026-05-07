@@ -1,6 +1,9 @@
 ﻿using App.Views;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Maui.ApplicationModel;
 using MinistryOfTruth.Domain.Interfaces;
+using MinistryOfTruth.Domain.Models;
+using MinistryOfTruth.ViewModels;
 
 namespace App
 {
@@ -24,7 +27,7 @@ namespace App
 
         public Task GoToGameAsync() => NavigateToRouteAsync(GameRoute);
 
-        public Task GoToResultsAsync() => NavigateToRouteAsync(ResultsRoute);
+        public Task GoToResultsAsync(GameState gameState, ScoreResult scoreResult) => NavigateToResultsAsync(gameState, scoreResult);
 
         private async Task NavigateToRouteAsync(string route)
         {
@@ -35,9 +38,17 @@ namespace App
                 StartRoute => _serviceProvider.GetRequiredService<StartView>(),
                 MainMenuRoute => _serviceProvider.GetRequiredService<MainMenuView>(),
                 GameRoute => _serviceProvider.GetRequiredService<GameView>(),
-                ResultsRoute => _serviceProvider.GetRequiredService<ResultsView>(),
                 _ => throw new InvalidOperationException($"Unknown route '{route}'.")
             };
+
+            await MainThread.InvokeOnMainThreadAsync(() => Show(rootPage, view));
+        }
+
+        private async Task NavigateToResultsAsync(GameState gameState, ScoreResult scoreResult)
+        {
+            var rootPage = _serviceProvider.GetRequiredService<AppRootPage>();
+            var resultsViewModel = ActivatorUtilities.CreateInstance<ResultsViewModel>(_serviceProvider, gameState, scoreResult);
+            var view = new ResultsView(resultsViewModel);
 
             await MainThread.InvokeOnMainThreadAsync(() => Show(rootPage, view));
         }

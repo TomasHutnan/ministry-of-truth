@@ -4,5 +4,5 @@ public interface IHighScoreStore
 {
     Task<int> LoadAsync();
     Task SaveAsync(int score);
-    Task SaveIfGreaterAsync(int score);
+    Task<bool> SaveIfGreaterAsync(int score);
 }

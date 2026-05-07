@@ -84,6 +84,6 @@ public partial class GameViewModel: ViewModelBase
 
     private async void GameEndend(object? sender, ScoreResult scoreResult)
     {
-        await _navigationService.GoToResultsAsync();
+        await _navigationService.GoToResultsAsync(GameState, scoreResult);
     }
 }
