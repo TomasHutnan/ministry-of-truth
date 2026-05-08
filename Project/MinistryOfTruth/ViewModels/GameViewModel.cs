@@ -7,6 +7,7 @@ using MinistryOfTruth.ViewModels.Base;
 using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Graphics;
 using System.Diagnostics;
+using MinistryOfTruth.ViewModels.Interfaces;
 
 namespace MinistryOfTruth.ViewModels;
 

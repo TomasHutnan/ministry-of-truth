@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using MinistryOfTruth.Domain.Interfaces;
+using MinistryOfTruth.ViewModels.Interfaces;
 
 namespace MinistryOfTruth.ViewModels.Base;
 

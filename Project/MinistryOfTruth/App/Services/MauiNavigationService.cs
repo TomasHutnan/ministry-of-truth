@@ -1,9 +1,9 @@
 ﻿using App.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Maui.ApplicationModel;
-using MinistryOfTruth.Domain.Interfaces;
 using MinistryOfTruth.Domain.Models;
 using MinistryOfTruth.ViewModels;
+using MinistryOfTruth.ViewModels.Interfaces;
 
 namespace App
 {

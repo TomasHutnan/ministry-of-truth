@@ -9,6 +9,7 @@ using MinistryOfTruth.Data.Csv;
 using MinistryOfTruth.Domain.Presentation;
 using CommunityToolkit.Maui;
 using App.Services;
+using MinistryOfTruth.ViewModels.Interfaces;
 
 namespace App
 {

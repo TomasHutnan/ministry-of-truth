@@ -4,6 +4,7 @@ using MinistryOfTruth.Domain.Engine;
 using MinistryOfTruth.Domain.Interfaces;
 using MinistryOfTruth.Domain.Models;
 using MinistryOfTruth.ViewModels.Base;
+using MinistryOfTruth.ViewModels.Interfaces;
 
 namespace MinistryOfTruth.ViewModels;
 
@@ -28,16 +29,22 @@ public partial class ResultsViewModel : ViewModelBase
         GameState gameState,
         ScoreResult scoreResult) : base(navigationService, gameEngine)
     {
-        Task.Run(() =>
-        {
-            if (highScoreStore.SaveIfGreaterAsync(scoreResult.Score).Result)
-            {
-                NewHighScoreText = "NEW HIGH-SCORE";
-            }
-        });
-        Task.Delay(500).ContinueWith((_) => IsContinueButtonEnabled = true);
         SurvivedDaysText = $"{gameState.Day} DAYS";
         Score = scoreResult.Score;
+        _ = InitializeAsync(highScoreStore, scoreResult.Score);
+    }
+
+    private async Task InitializeAsync(IHighScoreStore highScoreStore, int score)
+    {
+        if (await highScoreStore.SaveIfGreaterAsync(score))
+        {
+            await MainThread.InvokeOnMainThreadAsync(() =>
+                NewHighScoreText = "NEW HIGH-SCORE");
+        }
+
+        await Task.Delay(500);
+        await MainThread.InvokeOnMainThreadAsync(() =>
+            IsContinueButtonEnabled = true);
     }
 
     [RelayCommand]

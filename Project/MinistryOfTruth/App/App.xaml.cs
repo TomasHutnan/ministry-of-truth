@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using MinistryOfTruth.Domain.Interfaces;
+using MinistryOfTruth.ViewModels.Interfaces;
 
 namespace App
 {
