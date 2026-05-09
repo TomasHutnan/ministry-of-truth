@@ -38,6 +38,8 @@ public partial class GameView : ContentView
                 vm.ContainerWidth = Math.Max(0, FillContainer.Width);
             }
         };
+
+        Unloaded += (s, e) => _vm?.Dispose();
     }
 
     private void OnBindingContextChanged(object? sender, EventArgs e)

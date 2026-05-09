@@ -4,14 +4,12 @@ using MinistryOfTruth.Domain.Interfaces;
 using MinistryOfTruth.Domain.Models;
 using MinistryOfTruth.Domain.Presentation;
 using MinistryOfTruth.ViewModels.Base;
-using Microsoft.Maui.ApplicationModel;
-using Microsoft.Maui.Graphics;
 using System.Diagnostics;
 using MinistryOfTruth.ViewModels.Interfaces;
 
 namespace MinistryOfTruth.ViewModels;
 
-public partial class GameViewModel: ViewModelBase
+public partial class GameViewModel: ViewModelBase, IDisposable
 {
     private IGameEngine _engine;
     private RuleTextFormatter _ruleTextFormatter;
@@ -89,7 +87,7 @@ public partial class GameViewModel: ViewModelBase
         }
     }
 
-    ~GameViewModel()
+    public void Dispose()
     {
         _engine.GameStateChanged -= GameStateChanged;
         _engine.GameEnded -= GameEndend;
