@@ -58,13 +58,25 @@ public class CsvTextRepository : ITextRepository
         {
             await using (var stream = File.Create(tempPath))
             await using (var writer = new StreamWriter(stream))
-            await using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
             {
-                await csv.WriteRecordsAsync(texts.Select(text => new CsvTextRow
+                var config = new CsvConfiguration(CultureInfo.InvariantCulture)
                 {
-                    Id = text.Id,
-                    Content = text.Content
-                }));
+                    HasHeaderRecord = true,
+                    Delimiter = ",",
+                    Quote = '"',
+                    Escape = '"',
+                    BadDataFound = null,
+                    TrimOptions = TrimOptions.None
+                };
+
+                await using (var csv = new CsvWriter(writer, config))
+                {
+                    await csv.WriteRecordsAsync(texts.Select(text => new CsvTextRow
+                    {
+                        Id = text.Id,
+                        Content = text.Content
+                    }));
+                }
             }
 
             if (File.Exists(_textsCsvPath))

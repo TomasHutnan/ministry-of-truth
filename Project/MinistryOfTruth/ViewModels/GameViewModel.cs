@@ -13,6 +13,7 @@ public partial class GameViewModel: ViewModelBase, IDisposable
 {
     private IGameEngine _engine;
     private RuleTextFormatter _ruleTextFormatter;
+    private bool _disposed = false;
 
     private Color _red = Colors.Red;
     private Color _green = Colors.Green;
@@ -35,7 +36,6 @@ public partial class GameViewModel: ViewModelBase, IDisposable
     [ObservableProperty]
     public partial string TextsRemainingLabelText { get; set; } = "";
 
-    // generated observable field
     [ObservableProperty]
     public partial bool FlashIncorrect { get; set; } = false;
 
@@ -89,46 +89,71 @@ public partial class GameViewModel: ViewModelBase, IDisposable
 
     public void Dispose()
     {
-        _engine.GameStateChanged -= GameStateChanged;
-        _engine.GameEnded -= GameEndend;
+        if (_disposed) return;
+        
+        try
+        {
+            _engine.GameStateChanged -= GameStateChanged;
+            _engine.GameEnded -= GameEndend;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error during GameViewModel disposal: {ex.Message}");
+        }
+        finally
+        {
+            _disposed = true;
+        }
+    }
+
+    ~GameViewModel()
+    {
+        Dispose();
     }
 
     private void GameStateChanged(object? sender, GameState newGameState)
     {
-        if (GameState.Rule != newGameState.Rule)
+        if (_disposed) return;
+
+        if (GameState?.Rule != newGameState.Rule)
         {
             RuleLabelText = _ruleTextFormatter.BuildRuleText(newGameState.Rule);
         }
-        if (GameState.Day != newGameState.Day)
+        if (GameState?.Day != newGameState.Day)
         {
             DayLabelText = $"Day {newGameState.Day}";
         }
 
-        if (GameState.Score < newGameState.Score)
+        if (GameState?.Score < newGameState.Score)
         {
             ScoreLabelText = $"↑ {newGameState.Score} PTS";
             ScoreLabelColor = _green;
         }
-        else if (GameState.Score > newGameState.Score)
+        else if (GameState?.Score > newGameState.Score)
         {
             ScoreLabelText = $"↓ {newGameState.Score} PTS";
             ScoreLabelColor = _red;
         }
 
-        if (GameState.TextsRemaining != newGameState.TextsRemaining)
+        if (GameState?.TextsRemaining != newGameState.TextsRemaining)
         {
             string pluralS = newGameState.TextsRemaining == 1 ? "" : "s";
             TextsRemainingLabelText = $"{newGameState.TextsRemaining} text{pluralS} remaining";
         }
-        // flash red when the most recent decision was incorrect
+        
         if (newGameState.IsCorrectDecision == false)
         {
-            // Ensure property set happens on main thread because view bindings and animations respond on UI thread
             Debug.WriteLine("Flashing red.");
-            MainThread.BeginInvokeOnMainThread(() => FlashIncorrect = true);
+            MainThread.BeginInvokeOnMainThread(() => 
+            {
+                if (!_disposed)
+                {
+                    FlashIncorrect = true;
+                }
+            });
         }
 
-        if (GameState.StatusMessage != newGameState.StatusMessage)
+        if (GameState?.StatusMessage != newGameState.StatusMessage)
         {
             // TODO
         }
@@ -142,7 +167,6 @@ public partial class GameViewModel: ViewModelBase, IDisposable
         double ratio = GameState?.DangerLevelRatio ?? 0d;
         double available = ContainerWidth;
 
-        // Ensure ratio is within [0,1]
         if (double.IsNaN(ratio) || double.IsInfinity(ratio)) ratio = 0d;
         if (ratio < 0d) ratio = 0d;
         if (ratio > 1d) ratio = 1d;
@@ -153,6 +177,7 @@ public partial class GameViewModel: ViewModelBase, IDisposable
 
     private async void GameEndend(object? sender, ScoreResult scoreResult)
     {
+        if (_disposed) return;
         await _navigationService.GoToResultsAsync(GameState, scoreResult);
     }
 }

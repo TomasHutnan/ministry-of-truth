@@ -30,11 +30,10 @@ public class DocumentGenerator(
     private static readonly Random _random = new();
 
     private bool _isInitialized = false;
+    private readonly Lock _stateLocker = new();
 
     public async Task InitializeAsync()
     {
-        _isInitialized = false;
-
         var ruleTask = _ruleRepository.LoadAllAsync();
         var textTask = _textRepository.LoadAllAsync();
         var violationTask = _violationRepository.LoadAllAsync();
@@ -67,133 +66,142 @@ public class DocumentGenerator(
             list.Add(text);
         }
 
-        _ruleById = ruleById;
-        _textById = textById;
-        _violationByTextRuleIds = violationByTextRuleIds;
-        _textsByComplexity = textsByComplexity;
-
-        _isInitialized = true;
+        lock (_stateLocker)
+        {
+            _ruleById = ruleById;
+            _textById = textById;
+            _violationByTextRuleIds = violationByTextRuleIds;
+            _textsByComplexity = textsByComplexity;
+            _isInitialized = true;
+        }
     }
 
     public DayPackage CreateDayPackage(int dayNumber, int targetComplexity)
     {
-        if (!_isInitialized)
-            throw new InvalidOperationException("Document generator is not initialized.");
-
-        var rules = _ruleById.Values.ToList();
-        if (rules.Count == 0)
-            throw new InvalidOperationException("No rules available.");
-
-        // Build mapping rule -> violating texts
-        var ruleToViolatingTexts = new Dictionary<string, List<TextEntry>>();
-        foreach (var kvp in _violationByTextRuleIds)
+        lock (_stateLocker)
         {
-            var (textId, ruleId) = kvp.Key;
-            if (!_textById.TryGetValue(textId, out var text))
-                continue;
-            if (!ruleToViolatingTexts.TryGetValue(ruleId, out var list))
+            if (!_isInitialized)
             {
-                list = new List<TextEntry>();
-                ruleToViolatingTexts[ruleId] = list;
+                throw new InvalidOperationException("Document generator is not initialized. Call InitializeAsync first.");
             }
-            list.Add(text);
-        }
 
-        // Weighted pick of a rule by number of violating texts (fallback to uniform)
-        int totalViolations = ruleToViolatingTexts.Values.Sum(l => l.Count);
-        string selectedRuleId;
-        if (totalViolations == 0)
-        {
-            selectedRuleId = rules[_random.Next(rules.Count)].Id;
-        }
-        else
-        {
-            int pick = _random.Next(totalViolations);
-            int acc = 0;
-            selectedRuleId = rules[0].Id;
-            foreach (var r in rules)
+            var rules = _ruleById.Values.ToList();
+            if (rules.Count == 0)
             {
-                int count = ruleToViolatingTexts.TryGetValue(r.Id, out var list) ? list.Count : 0;
-                acc += count;
-                if (pick < acc)
+                throw new InvalidOperationException("No rules available.");
+            }
+
+            // Build mapping rule -> violating texts
+            var ruleToViolatingTexts = new Dictionary<string, List<TextEntry>>();
+            foreach (var kvp in _violationByTextRuleIds)
+            {
+                var (textId, ruleId) = kvp.Key;
+                if (!_textById.TryGetValue(textId, out var text))
+                    continue;
+                if (!ruleToViolatingTexts.TryGetValue(ruleId, out var list))
                 {
-                    selectedRuleId = r.Id;
-                    break;
+                    list = new List<TextEntry>();
+                    ruleToViolatingTexts[ruleId] = list;
                 }
+                list.Add(text);
             }
-        }
 
-        var selectedRule = _ruleById[selectedRuleId];
-
-        int clampedTargetComplexity = Math.Clamp(targetComplexity, _minComplexity, _maxComplexity);
-        int textCount = _minTextsPerDay + ((dayNumber - 1) / 2) * _textsAddedEveryTwoDays;
-        textCount = Math.Min(textCount, _minTextsPerDay + _maxExtraTexts);
-
-        int desiredViolations = textCount / 2; // aim for half
-
-        var allTexts = _textById.Values.ToList();
-        var targetTexts = _textsByComplexity.TryGetValue(clampedTargetComplexity, out var textsAtTarget) ? textsAtTarget : new List<TextEntry>();
-
-        var violatingPool = ruleToViolatingTexts.TryGetValue(selectedRuleId, out var vlist) ? vlist : new List<TextEntry>();
-        var nonViolatingPool = allTexts.Where(t => !violatingPool.Any(v => v.Id == t.Id)).ToList();
-
-        var chosen = new List<TextEntry>();
-
-        // 1) take violations from target complexity first
-        var violatingTarget = violatingPool.Where(t => targetTexts.Contains(t)).ToList();
-        AddRandomUniqueTexts(chosen, violatingTarget, Math.Min(desiredViolations, violatingTarget.Count));
-
-        // 2) take other violations if needed
-        AddRandomUniqueTexts(chosen, violatingPool.Except(chosen), Math.Min(desiredViolations - chosen.Count, violatingPool.Except(chosen).Count()));
-
-        // 3) fill remaining slots preferring target complexity non-violations
-        int remaining = textCount - chosen.Count;
-        var targetNonViolations = targetTexts.Where(t => !chosen.Any(c => c.Id == t.Id) && !violatingPool.Any(v => v.Id == t.Id)).ToList();
-        AddRandomUniqueTexts(chosen, targetNonViolations, Math.Min(remaining, targetNonViolations.Count));
-
-        // 4) fill from non-violating pool
-        remaining = textCount - chosen.Count;
-        AddRandomUniqueTexts(chosen, nonViolatingPool.Except(chosen), remaining);
-
-        // 5) final fallback: any remaining texts
-        remaining = textCount - chosen.Count;
-        if (remaining > 0)
-        {
-            AddRandomUniqueTexts(chosen, allTexts.Except(chosen), remaining);
-        }
-
-        // compute violation ids for the selected rule
-        var violationIds = new HashSet<string>(chosen.Where(t => _violationByTextRuleIds.ContainsKey((t.Id, selectedRuleId))).Select(t => t.Id));
-
-        // try swapping in more violations if we didn't reach desiredViolations
-        int currentViolations = violationIds.Count;
-        if (currentViolations < desiredViolations && violatingPool.Count > currentViolations)
-        {
-            var nonViolatingChosen = chosen.Where(t => !violationIds.Contains(t.Id)).ToList();
-            var remainingViolations = violatingPool.Where(t => !chosen.Any(c => c.Id == t.Id)).ToList();
-
-            int need = desiredViolations - currentViolations;
-            for (int i = 0; i < need && remainingViolations.Count > 0 && nonViolatingChosen.Count > 0; i++)
+            // Weighted pick of a rule by number of violating texts (fallback to uniform)
+            int totalViolations = ruleToViolatingTexts.Values.Sum(l => l.Count);
+            string selectedRuleId;
+            if (totalViolations == 0)
             {
-                int replaceIndex = _random.Next(nonViolatingChosen.Count);
-                var replaceText = nonViolatingChosen[replaceIndex];
-                nonViolatingChosen.RemoveAt(replaceIndex);
-
-                int pickIndex = _random.Next(remainingViolations.Count);
-                var newViolation = remainingViolations[pickIndex];
-                remainingViolations.RemoveAt(pickIndex);
-
-                int idx = chosen.FindIndex(t => t.Id == replaceText.Id);
-                if (idx >= 0)
+                selectedRuleId = rules[_random.Next(rules.Count)].Id;
+            }
+            else
+            {
+                int pick = _random.Next(totalViolations);
+                int acc = 0;
+                selectedRuleId = rules[0].Id;
+                foreach (var r in rules)
                 {
-                    chosen[idx] = newViolation;
+                    int count = ruleToViolatingTexts.TryGetValue(r.Id, out var list) ? list.Count : 0;
+                    acc += count;
+                    if (pick < acc)
+                    {
+                        selectedRuleId = r.Id;
+                        break;
+                    }
                 }
             }
 
-            violationIds = [.. chosen.Where(t => _violationByTextRuleIds.ContainsKey((t.Id, selectedRuleId))).Select(t => t.Id)];
-        }
+            var selectedRule = _ruleById[selectedRuleId];
 
-        return new DayPackage(selectedRule, new Queue<TextEntry>(chosen), violationIds);
+            int clampedTargetComplexity = Math.Clamp(targetComplexity, _minComplexity, _maxComplexity);
+            int textCount = _minTextsPerDay + ((dayNumber - 1) / 2) * _textsAddedEveryTwoDays;
+            textCount = Math.Min(textCount, _minTextsPerDay + _maxExtraTexts);
+
+            int desiredViolations = textCount / 2; // aim for half
+
+            var allTexts = _textById.Values.ToList();
+            var targetTexts = _textsByComplexity.TryGetValue(clampedTargetComplexity, out var textsAtTarget) ? textsAtTarget : new List<TextEntry>();
+
+            var violatingPool = ruleToViolatingTexts.TryGetValue(selectedRuleId, out var vlist) ? vlist : new List<TextEntry>();
+            var nonViolatingPool = allTexts.Where(t => !violatingPool.Any(v => v.Id == t.Id)).ToList();
+
+            var chosen = new List<TextEntry>();
+
+            // 1) take violations from target complexity first
+            var violatingTarget = violatingPool.Where(t => targetTexts.Contains(t)).ToList();
+            AddRandomUniqueTexts(chosen, violatingTarget, Math.Min(desiredViolations, violatingTarget.Count));
+
+            // 2) take other violations if needed
+            AddRandomUniqueTexts(chosen, violatingPool.Except(chosen), Math.Min(desiredViolations - chosen.Count, violatingPool.Except(chosen).Count()));
+
+            // 3) fill remaining slots preferring target complexity non-violations
+            int remaining = textCount - chosen.Count;
+            var targetNonViolations = targetTexts.Where(t => !chosen.Any(c => c.Id == t.Id) && !violatingPool.Any(v => v.Id == t.Id)).ToList();
+            AddRandomUniqueTexts(chosen, targetNonViolations, Math.Min(remaining, targetNonViolations.Count));
+
+            // 4) fill from non-violating pool
+            remaining = textCount - chosen.Count;
+            AddRandomUniqueTexts(chosen, nonViolatingPool.Except(chosen), remaining);
+
+            // 5) final fallback: any remaining texts
+            remaining = textCount - chosen.Count;
+            if (remaining > 0)
+            {
+                AddRandomUniqueTexts(chosen, allTexts.Except(chosen), remaining);
+            }
+
+            // compute violation ids for the selected rule
+            var violationIds = new HashSet<string>(chosen.Where(t => _violationByTextRuleIds.ContainsKey((t.Id, selectedRuleId))).Select(t => t.Id));
+
+            // try swapping in more violations if we didn't reach desiredViolations
+            int currentViolations = violationIds.Count;
+            if (currentViolations < desiredViolations && violatingPool.Count > currentViolations)
+            {
+                var nonViolatingChosen = chosen.Where(t => !violationIds.Contains(t.Id)).ToList();
+                var remainingViolations = violatingPool.Where(t => !chosen.Any(c => c.Id == t.Id)).ToList();
+
+                int need = desiredViolations - currentViolations;
+                for (int i = 0; i < need && remainingViolations.Count > 0 && nonViolatingChosen.Count > 0; i++)
+                {
+                    int replaceIndex = _random.Next(nonViolatingChosen.Count);
+                    var replaceText = nonViolatingChosen[replaceIndex];
+                    nonViolatingChosen.RemoveAt(replaceIndex);
+
+                    int pickIndex = _random.Next(remainingViolations.Count);
+                    var newViolation = remainingViolations[pickIndex];
+                    remainingViolations.RemoveAt(pickIndex);
+
+                    int idx = chosen.FindIndex(t => t.Id == replaceText.Id);
+                    if (idx >= 0)
+                    {
+                        chosen[idx] = newViolation;
+                    }
+                }
+
+                violationIds = [.. chosen.Where(t => _violationByTextRuleIds.ContainsKey((t.Id, selectedRuleId))).Select(t => t.Id)];
+            }
+
+            return new DayPackage(selectedRule, new Queue<TextEntry>(chosen), violationIds);
+        }
     }
 
     private static void AddRandomUniqueTexts(List<TextEntry> chosenTexts, IEnumerable<TextEntry> source, int count)

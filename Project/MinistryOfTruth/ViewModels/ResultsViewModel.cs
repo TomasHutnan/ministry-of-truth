@@ -8,8 +8,12 @@ using MinistryOfTruth.ViewModels.Interfaces;
 
 namespace MinistryOfTruth.ViewModels;
 
-public partial class ResultsViewModel : ViewModelBase
+public partial class ResultsViewModel : ViewModelBase, IDisposable
 {
+    private IHighScoreStore _highScoreStore;
+    private CancellationTokenSource _initializationCancellation = new();
+    private bool _disposed = false;
+
     [ObservableProperty]
     public partial string SurvivedDaysText { get; set; }
 
@@ -29,22 +33,77 @@ public partial class ResultsViewModel : ViewModelBase
         GameState gameState,
         ScoreResult scoreResult) : base(navigationService, gameEngine)
     {
+        _highScoreStore = highScoreStore ?? throw new ArgumentNullException(nameof(highScoreStore));
         SurvivedDaysText = $"{gameState.Day} DAYS";
         Score = scoreResult.Score;
-        _ = InitializeAsync(highScoreStore, scoreResult.Score);
+        
+        // Initialize without awaiting (fire-and-forget, but with proper cancellation tracking)
+        _ = InitializeAsync(scoreResult.Score, _initializationCancellation.Token);
     }
 
-    private async Task InitializeAsync(IHighScoreStore highScoreStore, int score)
+    private async Task InitializeAsync(int score, CancellationToken cancellationToken)
     {
-        if (await highScoreStore.SaveIfGreaterAsync(score))
+        try
         {
-            await MainThread.InvokeOnMainThreadAsync(() =>
-                NewHighScoreText = "NEW HIGH-SCORE");
-        }
+            if (await _highScoreStore.SaveIfGreaterAsync(score))
+            {
+                if (!cancellationToken.IsCancellationRequested && !_disposed)
+                {
+                    await MainThread.InvokeOnMainThreadAsync(() =>
+                    {
+                        if (!_disposed)
+                        {
+                            NewHighScoreText = "NEW HIGH-SCORE";
+                        }
+                    });
+                }
+            }
 
-        await Task.Delay(500);
-        await MainThread.InvokeOnMainThreadAsync(() =>
-            IsContinueButtonEnabled = true);
+            await Task.Delay(500, cancellationToken);
+            
+            if (!cancellationToken.IsCancellationRequested && !_disposed)
+            {
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                {
+                    if (!_disposed)
+                    {
+                        IsContinueButtonEnabled = true;
+                    }
+                });
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // View model was disposed before initialization completed
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error in ResultsViewModel initialization: {ex.Message}");
+        }
+    }
+
+    public void Dispose()
+    {
+        if (_disposed) return;
+        
+        try
+        {
+            _initializationCancellation?.Cancel();
+            _initializationCancellation?.Dispose();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error during ResultsViewModel disposal: {ex.Message}");
+        }
+        finally
+        {
+            _disposed = true;
+        }
+    }
+
+    ~ResultsViewModel()
+    {
+        Dispose();
     }
 
     [RelayCommand]

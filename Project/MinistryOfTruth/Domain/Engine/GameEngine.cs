@@ -8,7 +8,7 @@ namespace MinistryOfTruth.Domain.Engine;
 public class GameEngine(IDocumentGenerator documentGenerator) : IGameEngine
 {
     private const double _millisecondsPerFrame = 1000D / 60D;
-    private const double _passiveDangerGrowth = 1D / (120 * 1000);  // Fills up the whole meter in two minutes
+    private const double _passiveDangerGrowth = 1D / 120;  // Fills up the whole meter in two minutes
     private const double _dailyDangerDecline = 0.2D;
 
     private const double _incorrectApproveDangerGrowth = 0.10D;
@@ -18,13 +18,13 @@ public class GameEngine(IDocumentGenerator documentGenerator) : IGameEngine
 
     private IDocumentGenerator _documentGenerator = documentGenerator;
 
-    private static readonly object locker = new object();
+    private readonly Lock _stateLocker = new();
     private bool _isRunning = false;
     private CancellationTokenSource? _gameLoopCancelation;
 
     private double _dangerRatio;
 
-    private ScoreResult _scoreResult = new ScoreResult();
+    private ScoreResult _scoreResult = new();
     private DayPackage? _dayPackage;
     private int _currentDay;
 
@@ -55,7 +55,7 @@ public class GameEngine(IDocumentGenerator documentGenerator) : IGameEngine
 
     public async Task StartGameLoop()
     {
-        lock (locker)
+        lock (_stateLocker)
         {
             if (_isRunning)
             {
@@ -64,61 +64,85 @@ public class GameEngine(IDocumentGenerator documentGenerator) : IGameEngine
             _isRunning = true;
         }
 
-        await _documentGenerator.InitializeAsync();
-
-        _dangerRatio = 0;
-        _scoreResult = new ScoreResult();
-        _currentDay = 1;
-        StartDay();
-
-        _gameLoopCancelation = new CancellationTokenSource();
-
-        using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(_millisecondsPerFrame));
-        var stopwatch = Stopwatch.StartNew();
-        double lastTick = stopwatch.ElapsedMilliseconds;
-
-        OnGameStarted();
-
-        while (await timer.WaitForNextTickAsync(_gameLoopCancelation.Token))
+        try
         {
-            double currentTick = stopwatch.ElapsedMilliseconds;
-            double deltaTime = (currentTick - lastTick) / 1000D;
-            lastTick = currentTick;
+            await _documentGenerator.InitializeAsync();
 
-            Update(deltaTime);
+            lock (_stateLocker)
+            {
+                _dangerRatio = 0;
+                _scoreResult = new ScoreResult();
+                _currentDay = 1;
+            }
+
+            StartDay();
+
+            _gameLoopCancelation = new CancellationTokenSource();
+
+            using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(_millisecondsPerFrame));
+            var stopwatch = Stopwatch.StartNew();
+            double lastTick = stopwatch.ElapsedMilliseconds;
+
+            OnGameStarted();
+
+            while (await timer.WaitForNextTickAsync(_gameLoopCancelation.Token))
+            {
+                double currentTick = stopwatch.ElapsedMilliseconds;
+                double deltaTime = (currentTick - lastTick) / 1000D;
+                lastTick = currentTick;
+
+                Update(deltaTime);
+            }
+        }
+        finally
+        {
+            lock (_stateLocker)
+            {
+                _isRunning = false;
+            }
+            _gameLoopCancelation?.Dispose();
         }
     }
 
     public void Approve()
     {
-        if (!_isProcessing)
+        lock (_stateLocker)
         {
-            _lastAction = LastAction.Approve;
+            if (!_isProcessing)
+            {
+                _lastAction = LastAction.Approve;
+            }
         }
     }
 
     public void Censor()
     {
-        if (!_isProcessing)
+        lock (_stateLocker)
         {
-            _lastAction = LastAction.Censor;
+            if (!_isProcessing)
+            {
+                _lastAction = LastAction.Censor;
+            }
         }
     }
 
     private void Update(double deltaTime)
     {
-        _isProcessing = true;
-        _dangerRatio += deltaTime * _passiveDangerGrowth * 1000;
-
-        ResolveLastAction();
-
-        if (_dangerRatio >= 1)
+        lock (_stateLocker)
         {
-            EndGame();
-        }
+            _isProcessing = true;
+            _dangerRatio += deltaTime * _passiveDangerGrowth;
 
-        PublishState();
-        _isProcessing = false;
+            ResolveLastAction();
+
+            if (_dangerRatio >= 1)
+            {
+                EndGame();
+            }
+
+            PublishState();
+            _isProcessing = false;
+        }
     }
 
     private void ResolveLastAction()
@@ -131,7 +155,7 @@ public class GameEngine(IDocumentGenerator documentGenerator) : IGameEngine
 
         if (_lastAction == LastAction.Approve)
         {
-            if (!_dayPackage!.ViolationIds.Contains(_currentText!.Id))
+            if (_dayPackage is not null && _currentText is not null && !_dayPackage.ViolationIds.Contains(_currentText.Id))
             {
                 _scoreResult = _scoreResult with { CorrectApprovals = _scoreResult.CorrectApprovals + 1 };
                 _lastDecisionWasCorrect = true;
@@ -145,7 +169,7 @@ public class GameEngine(IDocumentGenerator documentGenerator) : IGameEngine
         }
         else
         {
-            if (_dayPackage!.ViolationIds.Contains(_currentText!.Id))
+            if (_dayPackage is not null && _currentText is not null && _dayPackage.ViolationIds.Contains(_currentText.Id))
             {
                 _scoreResult = _scoreResult with { CorrectCensors = _scoreResult.CorrectCensors + 1 };
                 _lastDecisionWasCorrect = true;
@@ -159,7 +183,7 @@ public class GameEngine(IDocumentGenerator documentGenerator) : IGameEngine
         }
 
         _lastAction = null;
-        if (_dayPackage.DocumentStack.Count > 0)
+        if (_dayPackage is not null && _dayPackage.DocumentStack.Count > 0)
         {
             NextText();
         }
@@ -173,13 +197,15 @@ public class GameEngine(IDocumentGenerator documentGenerator) : IGameEngine
     private void StartDay()
     {
         _dayPackage = _documentGenerator.CreateDayPackage(_currentDay, 3);
-
         NextText();
     }
 
     private void NextText()
     {
-        _currentText = _dayPackage!.DocumentStack.Dequeue();
+        if (_dayPackage is not null && _dayPackage.DocumentStack.Count > 0)
+        {
+            _currentText = _dayPackage.DocumentStack.Dequeue();
+        }
     }
 
     private void EndDay()
@@ -192,8 +218,7 @@ public class GameEngine(IDocumentGenerator documentGenerator) : IGameEngine
     {
         if (_gameLoopCancelation != null)
         {
-            _gameLoopCancelation!.Cancel();
-            _isRunning = false;
+            _gameLoopCancelation.Cancel();
 
             OnGameEnded(_scoreResult);
         }
@@ -201,12 +226,17 @@ public class GameEngine(IDocumentGenerator documentGenerator) : IGameEngine
 
     private void PublishState()
     {
+        if (_currentText is null || _dayPackage is null)
+        {
+            return;
+        }
+
         OnGameStateChanged(new GameState(
-            _currentText!.Content,
-            _dayPackage!.Rule.Keyword,
+            _currentText.Content,
+            _dayPackage.Rule.Keyword,
             _currentDay,
             _scoreResult.Score,
-            _dayPackage!.DocumentStack.Count + 1,
+            _dayPackage.DocumentStack.Count + 1,
             _dangerRatio,
             _lastDecisionWasCorrect,
             ""));
