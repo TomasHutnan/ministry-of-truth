@@ -1,19 +1,22 @@
-## Creating Your Own Repository
+# Ministry of Truth
+Ministry of Truth is a small 2D text-based decision‑making game implemented as a .NET MAUI course project. The player acts as a state censor charged with approving or censoring documents under an active ideological rule.
 
-To get started and learn how to work with this repository, please have a look at the [Git instructions in the interactive syllabus](https://is.muni.cz/auth/el/fi/jaro2026/PB178/index.qwarp?prejit=4439141). The key instructions:
+## Key ideas
+- Fast, time‑pressured decisions: each round presents a short text and a single active rule.
+- Mistakes and over‑censorship are both penalized to encourage careful decision making.
+- Game logic is deterministic and separated from UI and persistence so it is easy to test.
 
-- create a new **private** repository by forking this repository
-- make sure the new repository is called `PB178`
-- remove the fork relationship between the repositories
-- add this repository template as the Git remote repository
-- make sure to add `xtvaroz` and your seminar tutor(s) with the required permissions
+## What’s implemented
+- Data driven: texts, rules and violations are loaded from CSV files. CSV parsing supports quoted fields so text content can contain commas and escaped quotes.
+- Text set management: the app bundles a default text set archive (default_text_set.zip) and can load custom text‑set ZIPs. Text sets are extracted and stored into application local storage for the repositories to use.
+- Consolidated repository: a TextSetRepository implements the repository interfaces and the text‑set loader API. It centralizes CSV parsing, reading/writing and ZIP import/export using a single CSV configuration.
+- Startup behavior: when the menu is shown and no text set exists in app storage, the default text set is loaded automatically.
+- MVVM and DI: views are constructed via dependency injection and receive their view models. View models hold presentation state and command logic; navigation is handled by a platform navigation service.
+- Navigation: the navigation service supports passing runtime payloads (the results screen receives the final GameState and ScoreResult).
+- UI feedback: loading operations use an IsLoading property bound to a loading overlay; gameplay shows a time/health style fill bar; incorrect decisions briefly flash the background.
 
-Make sure to update your repository by running `git pull` after a new homework assignment is added.
-
-## Working On Assignments
-
-To work on a homework assignment or a project, we recommend starting by creating the final submission branch from the `main` branch. The submission branch should be named `hw00-submit`, `hw01-submit`, `hw02-submit`, or `project-submit`, depending on the assignment. All of your work should be contained in this branch, so that it can be properly reviewed.
-
-For each assignment, you should create a solution in the relevant directory in your repository. The solution should contain one or more projects with your code. To submit your assignment, create a merge request from the submission branch to the main branch and add your tutor(s) for review. If you'd like to resubmit the assignment after reviews (for up to 2 additional points), continue working in the same branch and merge request.
-
-After the final review, feel free to merge the branches.
+## Solution structure (overview)
+- App (mostly pure frontend, views, navigation, assets)
+- ViewModels
+- Domain (game engine, models)
+- Data (DAL - csv text set repositories, highscore storage)
