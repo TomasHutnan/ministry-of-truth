@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               x:Class="App.Views.Popups.InputPopup"
+               x:TypeArguments="x:String"
+               BackgroundColor="{StaticResource BkgSurface}">
+
+    <VerticalStackLayout Spacing="20" Padding="40,30">
+        <Label x:Name="PromptLabel"
+               Text="Enter value"
+               FontFamily="Titles"
+               HorizontalOptions="Center"
+               FontSize="18"
+               FontAttributes="Bold" />
+
+        <Entry x:Name="InputEntry"
+               FontFamily="Labels"
+               TextColor="{StaticResource TextOldPaper}" />
+
+        <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+            <Button Text="Confirm" FontFamily="Labels" Clicked="OnConfirmClicked" BackgroundColor="{StaticResource ViolationRed}" TextColor="{StaticResource TextOldPaper}" />
+            <Button Text="Cancel" FontFamily="Labels" Clicked="OnCancelClicked" BackgroundColor="{StaticResource MinistryMutedGold}" TextColor="{StaticResource TextOldPaper}" />
+        </HorizontalStackLayout>
+    </VerticalStackLayout>
+</toolkit:Popup>

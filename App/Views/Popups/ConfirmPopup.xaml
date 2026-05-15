@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               x:Class="App.Views.Popups.ConfirmPopup"
+               x:TypeArguments="x:Boolean"
+               BackgroundColor="{StaticResource BkgSurface}">
+
+    <VerticalStackLayout Spacing="20" Padding="40,30">
+        <Label x:Name="MessageLabel"
+               Text="Confirm action?"
+               FontFamily="Titles"
+               HorizontalOptions="Center"
+               FontSize="18"
+               FontAttributes="Bold" />
+
+        <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+            <Button Text="Yes" FontFamily="Labels" Clicked="OnYesClicked" BackgroundColor="{StaticResource ViolationRed}" TextColor="{StaticResource TextOldPaper}" />
+            <Button Text="No" FontFamily="Labels" Clicked="OnNoClicked" BackgroundColor="{StaticResource MinistryMutedGold}" TextColor="{StaticResource TextOldPaper}" />
+        </HorizontalStackLayout>
+    </VerticalStackLayout>
+</toolkit:Popup>

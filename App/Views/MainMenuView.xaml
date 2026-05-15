@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MinistryOfTruth.ViewModels;assembly=MinistryOfTruth.ViewModels"
+             xmlns:converters="clr-namespace:App.Converters"
+             x:Class="App.Views.MainMenuView"
+             x:Name="Root"
+             x:DataType="vm:MainMenuViewModel"
+             BackgroundColor="{StaticResource BkgAbyss}">
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <converters:WidthToFontSizeConverter x:Key="WidthToFontSizeConverter" MinFontSize="12" MaxFontSize="112" />
+        </ResourceDictionary>
+    </ContentView.Resources>
+    <Grid RowDefinitions="*">
+        <VerticalStackLayout Padding="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.03}">
+            <Label
+                Text="Ministry of Truth"
+                FontFamily="Titles"
+                CharacterSpacing="0.1"
+                FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.06}"
+                TextColor="{StaticResource TextOldPaper}"
+                VerticalOptions="Center"
+                HorizontalOptions="Start" />
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="50" Margin="0, 50, 0, 0">
+                <VerticalStackLayout Spacing="{Binding Source={x:Reference Root}, Path=Height, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.015}" Grid.Column="0">
+                    <Button
+                        Text="Play"
+                        Command="{Binding PlayCommand}"
+                        Style="{StaticResource MinistryButton}"
+                        FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"
+                        HorizontalOptions="Start"/>
+                    <Button
+                        Text="Load Text Set"
+                        Command="{Binding LoadTextSetCommand}"
+                        Style="{StaticResource MinistryButton}"
+                        FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"
+                        HorizontalOptions="Start"/>
+                    <Button
+                        Text="Reset to Defaults"
+                        Command="{Binding ResetToDefaultsCommand}"
+                        Style="{StaticResource MinistryButton}"
+                        FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"
+                        HorizontalOptions="Start"/>
+
+                    <VerticalStackLayout Margin="0, 75, 0, 0">
+                        <Label
+                            Text="High-Score"
+                            FontFamily="Labels"
+                            TextColor="{StaticResource TextDimmed}"
+                            FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.015}"/>
+                        <Label
+                            Text="{Binding HighScore}"
+                            FontFamily="Labels"
+                            TextColor="{StaticResource MinistryMutedGold}"
+                            FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.025}"/>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+                <Label Grid.Column="1"
+                       Text="{Binding MenuTickerText}"
+                       TextColor="{StaticResource TextDimmed}"
+                       FontFamily="Typewriter"
+                       FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.03}"/>
+            </Grid>
+        </VerticalStackLayout>
+
+        <VerticalStackLayout Grid.Row="0"
+                            Padding="20"
+                            Spacing="20"
+                            HorizontalOptions="Fill"
+                            VerticalOptions="Fill"
+                            BackgroundColor="#80000000"
+                            IsVisible="{Binding IsLoading}">
+            <VerticalStackLayout HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                Spacing="20">
+                <ActivityIndicator IsRunning="{Binding IsLoading}"
+                                  IsVisible="{Binding IsLoading}"
+                                  Color="{StaticResource MinistryMutedGold}"
+                                  Scale="2" />
+                <Label Text="Loading Text Set..."
+                       TextColor="{StaticResource TextOldPaper}"
+                       FontFamily="Labels"
+                       FontSize="18"
+                       HorizontalOptions="Center" />
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </Grid>
+</ContentView>

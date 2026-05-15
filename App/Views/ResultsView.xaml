@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MinistryOfTruth.ViewModels;assembly=MinistryOfTruth.ViewModels"
+             xmlns:converters="clr-namespace:App.Converters"
+             x:Class="App.Views.ResultsView"
+             x:DataType="vm:ResultsViewModel"
+             x:Name="Root"
+             BackgroundColor="{StaticResource BkgAbyss}">
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <converters:WidthToFontSizeConverter x:Key="WidthToFontSizeConverter" MinFontSize="12" MaxFontSize="112" />
+        </ResourceDictionary>
+    </ContentView.Resources>
+    <Grid RowDefinitions="10*,30*,10*,20*,20*,10*">
+        <VerticalStackLayout Grid.Row="1" VerticalOptions="Center">
+            <Label
+                Text="You Survived"
+                FontFamily="Titles"
+                FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.03}"
+                TextColor="{StaticResource TextOldPaper}"
+                VerticalOptions="Center" 
+                HorizontalOptions="Center"/>
+            <Label
+                Text="{Binding SurvivedDaysText, FallbackValue=0 DAYS}"
+                FontFamily="Titles"
+                FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.06}"
+                TextColor="{StaticResource ViolationRed}"
+                VerticalOptions="Center" 
+                HorizontalOptions="Center"/>
+        </VerticalStackLayout>
+        <VerticalStackLayout Grid.Row="3" VerticalOptions="Center">
+            <Label
+                Text="{Binding NewHighScoreText, FallbackValue=HIGHSCORE}"
+                FontFamily="Titles"
+                FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.03}"
+                TextColor="{StaticResource TextOldPaper}"
+                VerticalOptions="Center" 
+                HorizontalOptions="Center"/>
+            <Label
+                Text="{Binding Score, FallbackValue=0}"
+                FontFamily="Titles"
+                FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.03}"
+                TextColor="{StaticResource MinistryGreen}"
+                VerticalOptions="Center" 
+                HorizontalOptions="Center"/>
+        </VerticalStackLayout>
+        <Button Grid.Row="4"
+            Text="Continue"
+            Command="{Binding ContinueCommand}"
+            Style="{StaticResource MinistryButton}"
+            FontSize="{Binding Source={x:Reference Root}, Path=Width, x:DataType={x:Null}, Converter={StaticResource WidthToFontSizeConverter}, ConverterParameter=0.03}"
+            IsEnabled="{Binding IsContinueButtonEnabled, FallbackValue=true}"
+            VerticalOptions="Center"
+            HorizontalOptions="Center"/>
+    </Grid>
+</ContentView>
